@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Society</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    .header {
+      background-color: #4CAF50;
+      padding: 10px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+    .header a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .header a:hover {
+      text-decoration: underline;
+    }
+    .content {
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    .add-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      line-height: 20px;
+    }
+    .add-button:hover {
+      background-color: #45a049;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .edit-button, .delete-button, .save-button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .edit-button:hover, .save-button:hover {
+      background-color: #45a049;
+    }
+    .delete-button {
+      background-color: #f44336;
+    }
+    .delete-button:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="admin-dashboard.html">Dashboard</a>
+    <a href="user-data.html">Users Data</a>
+    <a href="ticket-dashboard.html">Ticket Dashboard</a>
+    <a href="society.html">Society</a>
+    <a href="services.html">Services</a>
+  </div>
+  <div class="content">
+    <h2>Society Details</h2>
+    <button class="add-button" onclick="addSociety()">+</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Society Name</th>
+          <th>Address</th>
+          <th>Incharge Name</th>
+          <th>Contact</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="societyData">
+        <!-- Society data will be populated here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    let societyData = JSON.parse(localStorage.getItem('societyData')) || [
+      { name: "Society A", address: "123 Main St, City, Country", incharge: "John Doe", contact: "1234567890" },
+      { name: "Society B", address: "456 Elm St, City, Country", incharge: "Jane Smith", contact: "0987654321" },
+      { name: "Society C", address: "789 Oak St, City, Country", incharge: "Alice Johnson", contact: "1122334455" }
+    ];
+
+    const societyDataTable = document.getElementById('societyData');
+
+    function populateTable() {
+      societyDataTable.innerHTML = '';
+      societyData.forEach((society, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><input type="text" value="${society.name}" disabled></td>
+          <td><input type="text" value="${society.address}" disabled></td>
+          <td><input type="text" value="${society.incharge}" disabled></td>
+          <td><input type="text" value="${society.contact}" disabled></td>
+          <td><button class="edit-button" onclick="editSociety(${index}, this)">Edit</button></td>
+          <td><button class="delete-button" onclick="deleteSociety(${index})">Delete</button></td>
+        `;
+        societyDataTable.appendChild(row);
+      });
+    }
+
+    function editSociety(index, button) {
+      const row = button.parentElement.parentElement;
+      const inputs = row.querySelectorAll('input');
+      const isEditing = button.textContent === 'Edit';
+
+      inputs.forEach(input => input.disabled = !isEditing);
+      button.textContent = isEditing ? 'Save' : 'Edit';
+
+      if (!isEditing) {
+        const updatedSociety = {
+          name: inputs[0].value,
+          address: inputs[1].value,
+          incharge: inputs[2].value,
+          contact: inputs[3].value
+        };
+
+        societyData[index] = updatedSociety;
+        localStorage.setItem('societyData', JSON.stringify(societyData));
+        alert('Society data updated successfully!');
+      }
+    }
+
+    function deleteSociety(index) {
+      if (confirm('Are you sure you want to delete this society?')) {
+        societyData.splice(index, 1);
+        localStorage.setItem('societyData', JSON.stringify(societyData));
+        populateTable();
+      }
+    }
+
+    function addSociety() {
+      const newSociety = { name: "", address: "", incharge: "", contact: "" };
+      societyData.push(newSociety);
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><input type="text" value="${newSociety.name}"></td>
+        <td><input type="text" value="${newSociety.address}"></td>
+        <td><input type="text" value="${newSociety.incharge}"></td>
+        <td><input type="text" value="${newSociety.contact}"></td>
+        <td><button class="save-button" onclick="saveNewSociety(this)">Save</button></td>
+        <td><button class="delete-button" onclick="deleteSociety(${societyData.length - 1})">Delete</button></td>
+      `;
+      societyDataTable.appendChild(row);
+    }
+
+    function saveNewSociety(button) {
+      const row = button.parentElement.parentElement;
+      const inputs = row.querySelectorAll('input');
+      const newSociety = {
+        name: inputs[0].value,
+        address: inputs[1].value,
+        incharge: inputs[2].value,
+        contact: inputs[3].value
+      };
+
+      societyData[societyData.length - 1] = newSociety;
+      localStorage.setItem('societyData', JSON.stringify(societyData));
+      alert('New society added successfully!');
+      populateTable();
+    }
+
+    populateTable();
+  </script>
+</body>
+</html>

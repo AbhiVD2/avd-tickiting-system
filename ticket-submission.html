@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticket Submission</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #fcf9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+      position: relative;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+      width: calc(100% - 20px);
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Issue Ticket</h2>
+    <form id="ticketForm">
+      <input type="text" id="fullName" name="fullName" placeholder="Full Name" required><br>
+      <input type="email" id="email" name="email" placeholder="Email" required><br>
+      <input type="text" id="subject" name="subject" placeholder="Subject" required><br>
+      <input type="text" id="issueLocation" name="issueLocation" placeholder="Issue Location" required><br>
+      <input type="text" id="wingBuildingNo" name="wingBuildingNo" placeholder="Wing/Building No" required><br>
+      <select id="society" name="society" required>
+        <option value="" disabled selected>Select Society</option>
+        <!-- Options will be dynamically loaded from society.html -->
+      </select><br>
+      <textarea id="description" name="description" placeholder="Description" rows="4" required></textarea><br>
+      <input type="submit" value="Submit">
+    </form>
+    <div class="dialog-box" id="dialogBox">
+      <p id="dialogMessage"></p>
+      <button onclick="closeDialog()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    function loadSocietyData() {
+      const societyData = JSON.parse(localStorage.getItem('societyData')) || [];
+      const societySelect = document.getElementById('society');
+      console.log("societyData", societyData);
+      console.log("societySelect", societySelect);
+      societyData.forEach(society => {
+        const option = document.createElement('option');
+        option.value = society.name;
+        option.textContent = `${society.name} - ${society.address} - ${society.incharge}`; societySelect.appendChild(option);
+      });
+    } // Call the function to load society data when the page loads loadSocietyData();
+
+    loadSocietyData();
+    document.getElementById('ticketForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const fullName = document.getElementById('fullName').value;
+      const email = document.getElementById('email').value;
+      const subject = document.getElementById('subject').value;
+      const issueLocation = document.getElementById('issueLocation').value;
+      const wingBuildingNo = document.getElementById('wingBuildingNo').value;
+      const description = document.getElementById('description').value;
+      const society = document.getElementById('society').value;
+      const now = new Date();
+      const options = { timeZone: 'Asia/Kolkata', hour12: false };
+      const istTime = now.toLocaleString('en-IN', options);
+
+
+      const generateUniqueCode = (existingCodes) => {
+        let code;
+        do { code = Math.floor(10000 + Math.random() * 90000); }
+        while (existingCodes.has(code));
+        existingCodes.add(code); return code;
+      };
+
+      const existingCodes = new Set();
+      const newCode = generateUniqueCode(existingCodes);
+
+      const ticketData = {
+        tickitId: newCode,
+        fullName,
+        email,
+        subject,
+        issueLocation,
+        wingBuildingNo,
+        description,
+        society,
+        status: 'Open',
+        createdAt: istTime
+      };
+
+      let tickets = JSON.parse(localStorage.getItem('tickets')) || [];
+      tickets.push(ticketData);
+      localStorage.setItem('tickets', JSON.stringify(tickets));
+
+      alert(`Ticket submitted successfully!!!! ${tickitId}`);
+      // document.getElementById('dialogMessage').innerText = `Ticket submitted successfully!!!! ${tickitId}`;
+      // document.getElementById('dialogBox').style.display = 'block';
+      document.getElementById('ticketForm').reset();
+    });
+  </script>
+</body>
+
+</html>

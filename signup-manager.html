@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #fcf9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 350px;
+      text-align: center;
+      position: relative;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    input[type="text"], input[type="password"], input[type="tel"], input[type="email"], select {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    input[type="submit"] {
+      width: calc(100% - 20px);
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      box-sizing: border-box;
+    }
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+    .home-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 105px;
+      height: 35px;
+    }
+    .home-button:hover {
+      background-color: #45a049;
+    }
+    .dialog-box {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      height: 150px;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      padding: 20px;
+    }
+    .dialog-box p {
+      margin: 0;
+      font-size: 18px;
+    }
+    .dialog-box button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .dialog-box button:hover {
+      background-color: #45a049;
+    }
+    .user-type-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .user-type-buttons button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 45%;
+    }
+    .user-type-buttons button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="home-button" onclick="window.location.href='login.html'">Home</button>
+    <h2>Signup</h2>
+    <div class="user-type-buttons">
+      <button onclick="window.location.href='signup.html'">Owner</button>
+      <button onclick="window.location.href='signup.html'">SCT</button>
+    </div>
+    <form id="signupForm">
+      <input type="text" id="fullName" name="fullName" placeholder="Full Name" required><br>
+      <input type="tel" id="mobileNo" name="mobileNo" placeholder="Mobile No" required><br>
+      <input type="email" id="email" name="email" placeholder="Email ID" required><br>
+      <input type="text" id="createUsername" name="createUsername" placeholder="Create Username" required><br>
+      <input type="password" id="createPassword" name="createPassword" placeholder="Create Password" required><br>
+      <select id="societyName" name="societyName" required>
+        <option value="" disabled selected>Select Society Name</option>
+        <!-- Add options dynamically from society.html -->
+      </select><br>
+      <input type="text" id="societyAddress" name="societyAddress" placeholder="Society Address" readonly><br>
+      <input type="submit" value="Signup">
+    </form>
+  </div>
+
+  <div class="dialog-box" id="dialogBox">
+    <p id="dialogMessage"></p>
+    <button onclick="closeDialog()">Close</button>
+  </div>
+
+  <script>
+    // Fetch society data from society.html
+    const societyData = JSON.parse(localStorage.getItem('societyData')) || [
+      { name: "Society A", address: "123 Main St, City, Country" },
+      { name: "Society B", address: "456 Elm St, City, Country" },
+      { name: "Society C", address: "789 Oak St, City, Country" }
+    ];
+
+    const societySelect = document.getElementById('societyName');
+    const societyAddressInput = document.getElementById('societyAddress');
+
+    // Populate society options
+    societyData.forEach(society => {
+      const option = document.createElement('option');
+      option.value = society.name;
+      option.textContent = society.name;
+      societySelect.appendChild(option);
+    });
+
+    // Update society address when a society is selected
+    societySelect.addEventListener('change', function() {
+      const selectedSociety = societyData.find(society => society.name === societySelect.value);
+      societyAddressInput.value = selectedSociety ? selectedSociety.address : '';
+    });
+
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const fullName = document.getElementById('fullName').value;
+      const mobileNo = document.getElementById('mobileNo').value;
+      const email = document.getElementById('email').value;
+      const createUsername = document.getElementById('createUsername').value;
+      const createPassword = document.getElementById('createPassword').value;
+      const societyName = document.getElementById('societyName').value;
+      const societyAddress = document.getElementById('societyAddress').value;
+
+      const managerData = {
+        fullName,
+        mobileNo,
+        email,
+        createUsername,
+        createPassword,
+        societyName,
+        societyAddress
+      };
+
+      let managers = JSON.parse(localStorage.getItem('managers')) || [];
+
+      // Check for duplicate data
+      const isDuplicate = managers.some(manager => 
+        manager.fullName === fullName ||
+        manager.mobileNo === mobileNo ||
+        manager.createUsername === createUsername
+      );
+
+      if (isDuplicate) {
+        document.getElementById('dialogMessage').innerText = 'This manager already has an account with the same details. Contact your Society Secretary.';
+      } else {
+        managers.push(managerData);
+        localStorage.setItem('managers', JSON.stringify(managers));
+        document.getElementById('dialogMessage').innerText = `Account has been Created, Thank you !!! ${fullName}`;
+      }
+
+      document.getElementById('dialogBox').style.display = 'block';
+    });
+
+    function closeDialog() {
+      document.getElementById('dialogBox').style.display = 'none';
+      document.getElementById('signupForm').reset(); // Clear all fields
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Society A",
+        "address": "123 Main St, City, Country",
+        "incharge": "John Doe",
+        "contact": "1234567890"
+    },
+    {
+        "name": "Society B",
+        "address": "456 Elm St, City, Country",
+        "incharge": "Jane Smith",
+        "contact": "0987654321"
+    },
+    {
+        "name": "Society C",
+        "address": "789 Oak St, City, Country",
+        "incharge": "Alice Johnson",
+        "contact": "1122334455"
+    },
+    {
+        "name": "ahsb",
+        "address": "hasjjnaokms",
+        "incharge": "jsnaj",
+        "contact": "68909-"
+    }
+]

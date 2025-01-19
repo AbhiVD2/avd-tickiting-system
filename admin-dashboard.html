@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+    }
+
+    .header {
+      background-color: #4CAF50;
+      padding: 25px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    .header a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .header a:hover {
+      text-decoration: underline;
+    }
+
+    .content {
+      padding: 20px;
+      max-width: 300px;
+      /* Reduce size */
+      margin-left: 0;
+      /* Move to left wall */
+    }
+
+    .charts {
+      display: flex;
+      flex-direction: column;
+      /* Change to column layout */
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .chart-container {
+      display: flex;
+      flex-direction: column;
+      /* Change to column layout */
+      gap: 20px;
+      justify-content: space-between;
+    }
+    .header-2 {
+      float: left;
+      float: right;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <div class="header">
+    <div class="header-2">
+      <a href="user-data.html">Users Data</a>
+      <a href="ticket-dashboard.html">Ticket Dashboard</a>
+      <a href="society.html">Society</a>
+      <a href="services.html">Services</a>
+      <a href="admin-login.html" onclick="logout()">Logout</a>
+    </div>
+  </div>
+  <p id="adminUsername" style="text-align: center; margin-top: 10px;"></p>
+  <div class="content">
+    <h2 id="welcomeMessage"></h2>
+    <p id="adminDetails"></p>
+    <div class="charts">
+      <div class="chart-container">
+        <canvas id="accountsChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="ticketsChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+  
+      localStorage.removeItem('loggedId')
+      window.location.href = 'admin-login.html';
+    }
+
+    // Fetch user and ticket data from localStorage
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const tickets = JSON.parse(localStorage.getItem('tickets')) || [];
+    const admin = localStorage.getItem('loggedId')
+
+    console.log(JSON.parse(localStorage.getItem('managers')));
+
+    const managers = JSON.parse(localStorage.getItem('managers'))
+    const managerCount = Array.isArray(managers) ? managers.length : 0;
+
+
+    // Calculate statistics
+    const totalOwners = users.filter(user => user.userType === 'Owner').length;
+    const totalSCT = users.filter(user => user.userType === 'SCT').length;
+    const unassignedTickets = tickets.filter(ticket => !ticket.manager).length;
+    const inProcessTickets = tickets.filter(ticket => ticket.manager && !ticket.completed).length;
+    const completedTickets = tickets.filter(ticket => ticket.completed).length;
+    const pendingTickets = tickets.length - (unassignedTickets + inProcessTickets + completedTickets);
+
+    // Update welcome message and admin details
+
+    document.getElementById('welcomeMessage').textContent = `Welcome, ${admin}`;
+    document.getElementById('adminDetails').textContent = `You are handling: ${managerCount}`;
+    // document.getElementById('adminUsername').textContent = `Username: ${admin}`;
+
+    // Create pie charts
+    const accountsCtx = document.getElementById('accountsChart').getContext('2d');
+    const ticketsCtx = document.getElementById('ticketsChart').getContext('2d');
+
+    new Chart(accountsCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Owners', 'SCT'],
+        datasets: [{
+          data: [totalOwners, totalSCT],
+          backgroundColor: ['#4CAF50', '#FFC107']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Accounts Count'
+          }
+        }
+      }
+    });
+
+    new Chart(ticketsCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Completed', 'In Process', 'Unassigned', 'Pending'],
+        datasets: [{
+          data: [completedTickets, inProcessTickets, unassignedTickets, pendingTickets],
+          backgroundColor: ['#4CAF50', '#FFC107', '#FF5722', '#9E9E9E']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Ticket Counts'
+          }
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

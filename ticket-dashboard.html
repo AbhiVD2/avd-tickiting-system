@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticket Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .header {
+      background-color: #4CAF50;
+      padding: 10px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    .header a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .header a:hover {
+      text-decoration: underline;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 24px;
+      color: #4CAF50;
+    }
+
+    .card p {
+      font-size: 48px;
+      margin: 10px 0;
+      color: #333;
+    }
+
+    .card small {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #777;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid #ccc;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .new-ticket {
+      background-color: #e7f4e4;
+    }
+
+    .approval-buttons {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .approval-buttons button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .approve-button {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .approve-button:hover {
+      background-color: #45a049;
+    }
+
+    .reject-button {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .reject-button:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <a href="admin-dashboard.html">Dashboard</a>
+    <a href="user-data.html">Users Data</a>
+    <a href="manager.html">Manager</a>
+    <a href="society.html">Society</a>
+    <a href="services.html">Services</a>
+    <a href="admin-login.html" onclick="logout()">Logout</a>
+  </div>
+  <div class="dashboard">
+    <div class="card">
+      <h3>Total Tickets</h3>
+      <p id="totalTickets">0</p>
+      <small>Total number of tickets submitted</small>
+    </div>
+    <div class="card">
+      <h3>Open Tickets</h3>
+      <p id="openTickets">0</p>
+      <small>Tickets that are currently open</small>
+    </div>
+    <div class="card">
+      <h3>Closed Tickets</h3>
+      <p id="closedTickets">0</p>
+      <small>Tickets that have been closed</small>
+    </div>
+    <div class="card">
+      <h3>Average Response Time</h3>
+      <p id="avgResponseTime">0h</p>
+      <small>Average time to respond to tickets</small>
+    </div>
+    <div class="card">
+      <h3>Unassigned Tickets</h3>
+      <p id="unassignedTickets">0</p>
+      <small>Tickets that are currently unassigned</small>
+    </div>
+    <div class="card">
+      <h3>Assigned Tickets</h3>
+      <p id="assignedTickets">0</p>
+      <small>Tickets that are currently assigned</small>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Ticket Id</th>
+        <th>Ticket No</th>
+        <th>Start date</th>
+        <th>Name of Owner / applicant</th>
+        <th>Email Id</th>
+        <th>Subject</th>
+        <th>Location</th>
+        <th>Description</th>
+        <th>Society</th>
+        <th>Wing and Flat No.</th>
+        <th>Status</th>
+
+        <th>Priority</th>
+        <th>Last Updated</th>
+
+        <th>Approval Status From Chairman / Secretary / Treasurer</th>
+        <th>Name of Chairman / Secretary / Treasurer</th>
+        <th>Admin Approval</th>
+        <th>Assign</th>
+        <!-- <th>Type of Instruction</th> -->
+        <th>Resolution provided - Ticket closed</th>
+      </tr>
+    </thead>
+    <tbody id="ticketTableBody">
+      <!-- Ticket data will be populated here -->
+    </tbody>
+  </table>
+
+  <script>
+    function logout() {
+      alert('Logged out successfully!');
+      window.location.href = 'admin-login.html';
+    }
+
+    // Fetch ticket data from localStorage
+    const tickets = JSON.parse(localStorage.getItem('tickets')) || [];
+    const managers = JSON.parse(localStorage.getItem('managers')) || [];
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+
+    // Calculate ticket statistics
+    const totalTickets = tickets.length;
+    const openTickets = tickets.filter(ticket => ticket.status === 'Open').length;
+    const closedTickets = tickets.filter(ticket => ticket.status === 'Closed').length;
+    const avgResponseTime = calculateAverageResponseTime(tickets);
+    const unassignedTickets = tickets.filter(ticket => !ticket.manager).length;
+    const assignedTickets = tickets.filter(ticket => ticket.manager).length;
+    console.log(avgResponseTime);
+    
+    // Update dashboard with statistics
+    document.getElementById('totalTickets').textContent = totalTickets;
+    document.getElementById('openTickets').textContent = openTickets;
+    document.getElementById('closedTickets').textContent = closedTickets;
+    document.getElementById('avgResponseTime').textContent = avgResponseTime;
+    document.getElementById('unassignedTickets').textContent = unassignedTickets;
+    document.getElementById('assignedTickets').textContent = assignedTickets;
+
+    // Populate ticket table
+    const ticketTableBody = document.getElementById('ticketTableBody');
+    tickets.forEach((ticket, index) => {
+      const row = document.createElement('tr');
+      row.className = ticket.status === 'Open' ? 'new-ticket' : '';
+      row.innerHTML = `
+      <td>${index + 1}</td>
+        <td>${ticket.tickitId}</td>
+        <td>${ticket.createdAt}</td>
+        <td>${ticket.fullName}</td>
+        <td>${ticket.email}</td>
+        <td>${ticket.subject}</td>
+        <td>${ticket.issueLocation}</td>
+        <td>${ticket.description}</td>
+        <td>${ticket.society}</td>
+        <td>${ticket.wingBuildingNo}</td>
+        <td>
+          <select onchange="updateStatus(${index}, this.value)">
+            <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>Open</option>
+            <option value="Closed" ${ticket.status === 'Closed' ? 'selected' : ''}>Closed</option>
+            <option value="Pending" ${ticket.status === 'Pending' ? 'selected' : ''}>Pending</option>
+          </select>
+        </td>
+        <td contenteditable="true">${ticket.priority || 'Normal'}</td>
+        <td>${ticket.lastUpdated || 'N/A'}</td>
+      
+        <td contenteditable="true">${ticket.instructionType || 'N/A'}</td>
+        <td contenteditable="true">${ticket.additionalRequirement || 'N/A'}</td>
+        <td contenteditable="true">${ticket.ticketStatus || 'Received'}</td>
+        <td contenteditable="true">${ticket.approvalFrom || 'N/A'}</td>
+        <td>
+          <select onchange="assignManager(${index}, this.value)">
+            <option value="">Unassigned</option>
+            ${managers.map(manager => `<option value="${manager.createUsername}" ${ticket.manager === manager.createUsername ? 'selected' : ''}>${manager.createUsername}</option>`).join('')}
+          </select>
+        </td>
+        <td>
+          <button onclick="editTicket(${index})">Edit</button>
+          <button onclick="updateTicket(${index})">Update</button>
+        </td>
+      `;
+      ticketTableBody.appendChild(row);
+    });
+
+    function parseCustomDate(dateString) {
+      const [datePart, timePart] = dateString.split(', ');
+      const [day, month, year] = datePart.split('/').map(Number);
+      const [hours, minutes, seconds] = timePart.split(':').map(Number);
+      return new Date(year, month - 1, day, hours, minutes, seconds);
+    }
+
+    function calculateAverageResponseTime(tickets) {
+      const responseTimes = tickets
+        .filter(ticket => ticket.status === 'Closed')
+        .map(ticket => {
+          console.log("createdAt", ticket.createdAt);
+          console.log("closedAt", ticket.lastUpdated);
+
+          const createdAt = parseCustomDate(ticket.createdAt);
+          const closedAt = parseCustomDate(ticket.lastUpdated);
+          return (closedAt - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
+        });
+
+      if (responseTimes.length === 0) return '0h';
+
+      const totalResponseTime = responseTimes.reduce((total, time) => total + time, 0);
+      const avgResponseTime = totalResponseTime / responseTimes.length;
+      console.log("time", avgResponseTime);
+
+      return `${avgResponseTime.toFixed(2)}h`;
+    }
+
+    function assignManager(ticketIndex, managerUsername) {
+      tickets[ticketIndex].manager = managerUsername;
+      localStorage.setItem('tickets', JSON.stringify(tickets));
+      location.reload();
+    }
+
+    function updateStatus(index, status) {
+      const now = new Date();
+      const options = { timeZone: 'Asia/Kolkata', hour12: false };
+      const istTime = now.toLocaleString('en-IN', options);
+      tickets[index].status = status;
+      tickets[index].lastUpdated = istTime;
+      localStorage.setItem('tickets', JSON.stringify(tickets));
+      location.reload();
+    }
+
+    function editTicket(index) {
+      const row = ticketTableBody.rows[index];
+      for (let i = 11; i <= 18; i++) {
+        row.cells[i].contentEditable = "true";
+      }
+    }
+
+    function updateTicket(index) {
+      const row = ticketTableBody.rows[index];
+      const updatedTicket = {
+        tickitId: tickets[index].tickitId,
+        createdAt: tickets[index].createdAt,
+        fullName: tickets[index].fullName,
+        email: tickets[index].email,
+        subject: tickets[index].subject,
+        issueLocation: tickets[index].issueLocation,
+        description: tickets[index].description,
+        society: tickets[index].society,
+        wingBuildingNo: tickets[index].wingBuildingNo,
+        status: tickets[index].status,
+        priority: row.cells[11].innerText,
+        lastUpdated: tickets[index].lastUpdated,
+        workAllotedBy: row.cells[13].innerText,
+        instructionType: row.cells[14].innerText,
+        additionalRequirement: row.cells[15].innerText,
+        ticketStatus: row.cells[16].innerText,
+        manager: tickets[index].manager,
+        approvalFrom: row.cells[17].innerText
+      };
+      tickets[index] = updatedTicket;
+      localStorage.setItem('tickets', JSON.stringify(tickets));
+      alert('Ticket updated successfully!');
+      location.reload();
+    }
+  </script>
+</body>
+
+</html>

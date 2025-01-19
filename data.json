@@ -1,0 +1,29 @@
+{
+    "admin": {
+        "name": "John Doe",
+        "email": "admin@example.com",
+        "role": "Administrator",
+        "managers": [
+            {
+                "name": "Jane Smith",
+                "email": "jane.smith@example.com",
+                "tickits": {
+                    "number" : 1,
+                    "description": "description",
+                    "level":"L1"
+                }
+            },
+            {
+                "name": "Robert Brown",
+                "email": "robert.brown@example.com",
+            },
+            "SCT": [
+                {
+                    
+                }
+            ]
+        ]
+    },
+
+    
+}

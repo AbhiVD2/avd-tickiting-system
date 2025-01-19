@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #fcf9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 350px;
+      text-align: center;
+      position: relative;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    input[type="text"], input[type="password"] {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    input[type="submit"], .button {
+      width: 48%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    input[type="submit"]:hover, .button:hover {
+      background-color: #45a049;
+    }
+    .home-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 105px;
+      height: 35px;
+    }
+    .signup-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 105px;
+      height: 35px;
+    }
+    .home-button:hover, .signup-button:hover {
+      background-color: #45a049;
+    }
+    .dialog-box {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      height: 80px;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      padding: 20px;
+    }
+    .dialog-box p {
+      margin: 0;
+      font-size: 18px;
+    }
+    .dialog-box button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .dialog-box button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="signup-button" onclick="window.location.href='signup-manager.html'">Signup</button>
+    <button class="home-button" onclick="window.location.href='login.html'">Home</button>
+    <br><br>
+    <h2>Manager Login</h2>
+    <form id="loginForm">
+      <input type="text" id="username" name="username" placeholder="Username" required><br>
+      <input type="password" id="password" name="password" placeholder="Password" required><br>
+      <div class="button-container">
+        <input type="submit" value="Login">
+        <button class="button" onclick="window.location.href='admin-login.html'">Admin Login</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-box" id="dialogBox">
+    <p id="dialogMessage"></p>
+    <button onclick="closeDialog()">Close</button>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const managers = JSON.parse(localStorage.getItem('managers')) || [];
+
+      const manager = managers.find(manager => manager.createUsername === username && manager.createPassword === password);
+
+      if (manager) {
+        alert('Login successful!');
+        window.location.href = 'manager-dashboard.html';
+      } else {
+        document.getElementById('dialogMessage').innerText = 'Account Details Not Found!!!';
+        document.getElementById('dialogBox').style.display = 'block';
+      }
+    });
+
+    function closeDialog() {
+      document.getElementById('dialogBox').style.display = 'none';
+    }
+
+    // Clear fields on page load
+    window.onload = function() {
+      document.getElementById('loginForm').reset();
+    };
+  </script>
+</body>
+</html>

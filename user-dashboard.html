@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      background-color: #4CAF50;
+      width: 200px;
+      height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+
+    .sidebar a:hover {
+      text-decoration: underline;
+    }
+
+    .content {
+      margin-left: 220px;
+      padding: 20px;
+      width: calc(100% - 220px);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #4CAF50;
+      padding: 10px;
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 200px;
+      width: calc(100% - 200px);
+      box-sizing: border-box;
+    }
+
+    .logout {
+      background-color: #f44336;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .logout:hover {
+      background-color: #d32f2f;
+    }
+
+    .personal-data {
+      margin-top: 100px;
+    }
+
+    .personal-data h2 {
+      margin-bottom: 20px;
+    }
+
+    .personal-data p {
+      margin: 10px 0;
+    }
+
+    .ticket-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .issue-ticket {
+      width: 48%;
+      /* Additional styling for issue ticket */
+    }
+
+    .ticket-status {
+      width: 48%;
+      /* Additional styling for ticket status */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <a href="javascript:void(0);" onclick="loadContent('user-dashboard.html')">Home</a>
+    <a href="javascript:void(0);" onclick="loadContent('events.html')">Event</a>
+    <a href="javascript:void(0);" onclick="loadContent('ticket-submission.html')">Complaint</a>
+    <a href="javascript:void(0);" onclick="loadContent('emergency-contacts.html')">Emergency Contacts</a>
+    <a href="javascript:void(0);" onclick="loadContent('personal-details.html')">Personal Details</a>
+  </div>
+  <div class="content">
+    <div class="header">
+      <h1 id="username"></h1>
+      <button class="logout" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="dynamicContent">
+      <div class="ticket-container">
+        <div class="issue-ticket">
+          <!-- Issue Ticket content here -->
+        </div>
+        <div class="ticket-status">
+          <!-- Ticket Status content here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      window.location.href = 'login.html';
+    }
+
+    function loadContent(url) {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.onload = function () {
+        if (this.status === 200) {
+          console.log("Content loaded successfully");
+          // Replace the content of the 'dynamicContent' div with the loaded content
+          document.getElementById('dynamicContent').innerHTML = this.responseText;
+          // Execute any scripts in the loaded content
+          const scripts = document.getElementById('dynamicContent').getElementsByTagName('script');
+          for (let i = 0; i < scripts.length; i++) {
+            eval(scripts[i].innerText);
+          }
+        } else {
+          console.log("Error loading content");
+          document.getElementById('dynamicContent').innerHTML = `<p>Error loading content. Please try again.</p>`;
+        }
+      };
+      xhr.send();
+    }
+
+    const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+    const luser = localStorage.getItem("logedIn");
+    const userExists = allUsers.find(user => user.createUsername === luser);
+    console.log(userExists ? "User found" : "User not found");
+    if (userExists) {
+      document.getElementById('username').textContent = `Welcome, ${userExists.fullName}`;
+    } else {
+      alert('No user is logged in.');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+
+</html>

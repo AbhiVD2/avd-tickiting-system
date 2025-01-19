@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <div class="content">
+        <div class="personal-data">
+            <h2>Personal Data</h2>
+            <p id="fullName">Full Name: </p>
+            <p id="email">Email: </p>
+            <p id="mobileNo">Mobile No: </p>
+            <p id="societyName">Society Name: </p>
+            <p id="wingBuildingNo">Wing/Building No: </p>
+            <p id="flatNo">Flat No: </p>
+            <p id="flatOwnerName">Flat Owner Name: </p>
+        </div>
+    </div>
+
+    <script>
+        console.log("called");
+        const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+        const luser = localStorage.getItem("logedIn");
+        console.log('All Users:', allUsers);
+        console.log('Logged In User:', luser);
+        const userExists = allUsers.find(user => user.createUsername === luser);
+        console.log("user", userExists);
+        if (userExists) {
+            console.log("User found:", userExists);
+            document.getElementById('fullName').textContent = `Full Name: ${userExists.fullName}`;
+            document.getElementById('email').textContent = `Email: ${userExists.email}`;
+            document.getElementById('mobileNo').textContent = `Mobile No: ${userExists.mobileNo}`;
+            document.getElementById('societyName').textContent = `Society Name: ${userExists.societyName}`;
+            document.getElementById('wingBuildingNo').textContent = `Wing/Building No: ${userExists.wingBuildingNo}`;
+            document.getElementById('flatNo').textContent = `Flat No: ${userExists.flatNo}`;
+            document.getElementById('flatOwnerName').textContent = `Flat Owner Name: ${userExists.flatOwnerName}`;
+        } else {
+            alert('No user is logged in.');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+
+</html>
