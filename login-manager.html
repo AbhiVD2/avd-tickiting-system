@@ -145,6 +145,7 @@
 
       if (manager) {
         alert('Login successful!');
+        localStorage.setItem("logedIn",manager)
         window.location.href = 'manager-dashboard.html';
       } else {
         document.getElementById('dialogMessage').innerText = 'Account Details Not Found!!!';

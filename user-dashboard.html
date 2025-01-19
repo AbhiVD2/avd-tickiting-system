@@ -12,17 +12,31 @@
       background-color: #f0f0f0;
       margin: 0;
       display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .main {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: flex-start;
+      height: 100vh;
+      margin: 0;
+      align-items: center;
     }
 
     .sidebar {
       background-color: #4CAF50;
-      width: 200px;
-      height: 100vh;
-      padding: 20px;
+
+      width: 210px;
+      height: 110vh;
+      padding: 102px 20px;
       box-sizing: border-box;
       position: fixed;
       top: 0;
       left: 0;
+      overflow-y: auto;
     }
 
     .sidebar a {
@@ -40,7 +54,9 @@
     .content {
       margin-left: 220px;
       padding: 20px;
+      flex: 1;
       width: calc(100% - 220px);
+      box-sizing: border-box;
     }
 
     .header {
@@ -84,42 +100,51 @@
 
     .ticket-container {
       display: flex;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 300px;
+
     }
 
-    .issue-ticket {
-      width: 48%;
-      /* Additional styling for issue ticket */
-    }
-
+    .issue-ticket,
     .ticket-status {
-      width: 48%;
-      /* Additional styling for ticket status */
+      flex: 10;
+      min-width: 300px;
+
+    }
+
+    .container-sidebar-form {
+      margin-top: 60px;
+
     }
   </style>
 </head>
 
 <body>
-  <div class="sidebar">
-    <a href="javascript:void(0);" onclick="loadContent('user-dashboard.html')">Home</a>
-    <a href="javascript:void(0);" onclick="loadContent('events.html')">Event</a>
-    <a href="javascript:void(0);" onclick="loadContent('ticket-submission.html')">Complaint</a>
-    <a href="javascript:void(0);" onclick="loadContent('emergency-contacts.html')">Emergency Contacts</a>
-    <a href="javascript:void(0);" onclick="loadContent('personal-details.html')">Personal Details</a>
-  </div>
-  <div class="content">
-    <div class="header">
-      <h1 id="username"></h1>
-      <button class="logout" onclick="logout()">Logout</button>
-    </div>
-
-    <div id="dynamicContent">
-      <div class="ticket-container">
-        <div class="issue-ticket">
-          <!-- Issue Ticket content here -->
+  <div class="main">
+    <div class="container-sidebar-form">
+      <div class="sidebar">
+        <!-- <a href="javascript:void(0);" onclick="loadContent('user-dashboard.html')">Home</a> -->
+        <a href="javascript:void(0);" onclick="loadContent('events.html')">Event</a>
+        <a href="javascript:void(0);" onclick="loadContent('ticket-submission.html')">Complaint</a>
+        <a href="javascript:void(0);" onclick="loadContent('emergency-contacts.html')">Emergency Contacts</a>
+        <a href="javascript:void(0);" onclick="loadContent('personal-details.html')">Personal Details</a>
+      </div>
+      <div class="content">
+        <div class="header">
+          <h1 id="username"></h1>
+          <button class="logout" onclick="logout()">Logout</button>
         </div>
-        <div class="ticket-status">
-          <!-- Ticket Status content here -->
+
+        <div id="dynamicContent">
+          <div class="ticket-container">
+            <div class="issue-ticket">
+              <!-- Issue Ticket content here -->
+            </div>
+            <div class="ticket-status">
+              <!-- Ticket Status content here -->
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -127,6 +152,7 @@
 
   <script>
     function logout() {
+      localStorage.removeItem('loggedId')
       window.location.href = 'login.html';
     }
 
