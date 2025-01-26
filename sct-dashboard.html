@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCT Dashboard</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .main {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: flex-start;
+      height: 100vh;
+      margin: 0;
+      align-items: center;
+    }
+
+    .sidebar {
+      background-color: #294192;
+      width: 60px;
+      height: 100vh;
+      padding: 110px 15px;
+      box-sizing: border-box;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
+      transition: width 0.3s;
+    }
+
+    .sidebar:hover {
+      width: 200px;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      color: white;
+      text-decoration: none;
+      margin: 40px 0;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .sidebar a i {
+      margin-right: 10px;
+    }
+
+    .sidebar a span {
+      display: none;
+      transition: display 0.3s;
+    }
+
+    .sidebar:hover a span {
+      display: inline;
+    }
+
+    .sidebar a:hover {
+      text-decoration: underline;
+    }
+
+    .content {
+      margin-left: 80px;
+      padding: 20px;
+      flex: 1;
+      width: calc(100% - 80px);
+      box-sizing: border-box;
+      transition: margin-left 0.3s, width 0.3s;
+    }
+
+    .sidebar:hover ~ .content {
+      margin-left: 220px;
+      width: calc(100% - 220px);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #4CAF50;
+      padding: 10px;
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 60px;
+      width: calc(100% - 60px);
+      box-sizing: border-box;
+      transition: left 0.3s, width 0.3s;
+    }
+
+    .sidebar:hover ~ .content .header {
+      left: 200px;
+      width: calc(100% - 200px);
+    }
+
+    .logout {
+      background-color: #f44336;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .logout:hover {
+      background-color: #d32f2f;
+    }
+
+    .personal-data {
+      margin-top: 100px;
+    }
+
+    .personal-data h2 {
+      margin-bottom: 20px;
+    }
+
+    .personal-data p {
+      margin: 10px 0;
+    }
+
+    .ticket-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 300px;
+
+    }
+
+    .issue-ticket,
+    .ticket-status {
+      flex: 10;
+      min-width: 300px;
+
+    }
+
+    .container-sidebar-form {
+      margin-top: 60px;
+
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main">
+    <div class="container-sidebar-form">
+      <div class="sidebar">
+        <a href="javascript:void(0);" onclick="loadContent('events.html')">
+          <i class="fas fa-calendar-alt"></i><span>Event</span>
+        </a>
+        <a href="javascript:void(0);" onclick="loadContent('ticket-submission.html')">
+          <i class="fas fa-ticket-alt"></i><span>Complaint</span>
+        </a>
+        <a href="javascript:void(0);" onclick="loadContent('emergency-contacts.html')">
+          <i class="fas fa-phone-alt"></i><span>Emergency Contacts</span>
+        </a>
+        <a href="javascript:void(0);" onclick="loadContent('personal-details.html')">
+          <i class="fas fa-user"></i><span>Personal Details</span>
+        </a>
+      </div>
+      <div class="content">
+        <div class="header">
+          <h1 id="username"></h1>
+          <button class="logout" onclick="logout()">Logout</button>
+        </div>
+
+        <div id="dynamicContent">
+          <div class="ticket-container">
+            <div class="issue-ticket">
+              <!-- Issue Ticket content here -->
+            </div>
+            <div class="ticket-status">
+              <!-- Ticket Status content here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('loggedId')
+      window.location.href = 'login.html';
+    }
+
+    function loadContent(url) {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.onload = function () {
+        if (this.status === 200) {
+          console.log("Content loaded successfully");
+          // Replace the content of the 'dynamicContent' div with the loaded content
+          document.getElementById('dynamicContent').innerHTML = this.responseText;
+          // Execute any scripts in the loaded content
+          const scripts = document.getElementById('dynamicContent').getElementsByTagName('script');
+          for (let i = 0; i < scripts.length; i++) {
+            eval(scripts[i].innerText);
+          }
+        } else {
+          console.log("Error loading content");
+          document.getElementById('dynamicContent').innerHTML = `<p>Error loading content. Please try again.</p>`;
+        }
+      };
+      xhr.send();
+    }
+
+    const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+    const luser = localStorage.getItem("logedIn");
+    const userExists = allUsers.find(user => user.createUsername === luser);
+    console.log(userExists ? "User found" : "User not found");
+    if (userExists) {
+      document.getElementById('username').textContent = `Welcome, ${userExists.fullName}`;
+    } else {
+      alert('No user is logged in.');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+
+</html>

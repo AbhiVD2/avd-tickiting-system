@@ -270,76 +270,82 @@
     }
 
     // Fetch ticket data from localStorage
-    const tickets = JSON.parse(localStorage.getItem('tickets')) || [];
-    const managers = JSON.parse(localStorage.getItem('managers')) || [];
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+    async function fetchTickets() {
+      const response = await fetch('http://127.0.0.1:5000/api/tickets');
+      const tickets = await response.json();
+      const ticketTableBody = document.getElementById('ticketTableBody');
 
-    // Calculate ticket statistics
-    const totalTickets = tickets.length;
-    const openTickets = tickets.filter(ticket => ticket.status === 'Open').length;
-    const closedTickets = tickets.filter(ticket => ticket.status === 'Closed').length;
-    const avgResponseTime = calculateAverageResponseTime(tickets);
-    const unassignedTickets = tickets.filter(ticket => !ticket.manager).length;
-    const assignedTickets = tickets.filter(ticket => ticket.manager).length;
-    console.log(avgResponseTime);
+      tickets.forEach((ticket, index) => {
+        const row = document.createElement('tr');
+        row.className = ticket.status === 'Open' ? 'new-ticket' : '';
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${ticket.tickitId}</td>
+          <td>${ticket.createdAt}</td>
+          <td>${ticket.fullName}</td>
+          <td>${ticket.email}</td>
+          <td>${ticket.subject}</td>
+          <td>${ticket.issueLocation}</td>
+          <td>${ticket.description}</td>
+          <td>${ticket.society}</td>
+          <td>${ticket.wingBuildingNo}</td>
+          <td>
+            <select onchange="updateStatus('${ticket._id}', this.value)">
+              <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>Open</option>
+              <option value="Closed" ${ticket.status === 'Closed' ? 'selected' : ''}>Closed</option>
+              <option value="Pending" ${ticket.status === 'Pending' ? 'selected' : ''}>Pending</option>
+            </select>
+          </td>
+          <td contenteditable="true">${ticket.priority || 'Normal'}</td>
+          <td>${ticket.lastUpdated || 'N/A'}</td>
+          <td contenteditable="true">${ticket.instructionType || 'N/A'}</td>
+          <td contenteditable="true">${ticket.additionalRequirement || 'N/A'}</td>
+          <td contenteditable="true">${ticket.ticketStatus || 'Received'}</td>
+          <td contenteditable="true">${ticket.approvalFrom || 'N/A'}</td>
+          <td>
+            <select onchange="assignManager('${ticket._id}', this.value)">
+              <option value="">Unassigned</option>
+              ${managers.map(manager => `<option value="${manager.createUsername}" ${ticket.manager === manager.createUsername ? 'selected' : ''}>${manager.createUsername}</option>`).join('')}
+            </select>
+          </td>
+          <td>
+            <button onclick="editTicket(${index})">Edit</button>
+            <button onclick="updateTicket('${ticket._id}', ${index})">Update</button>
+            <button onclick="deleteTicket('${ticket._id}')">Delete</button>
+          </td>
+        `;
+        ticketTableBody.appendChild(row);
+      });
 
-    // Update dashboard with statistics
-    document.getElementById('totalTickets').textContent = totalTickets;
-    document.getElementById('openTickets').textContent = openTickets;
-    document.getElementById('closedTickets').textContent = closedTickets;
-    document.getElementById('avgResponseTime').textContent = avgResponseTime;
-    document.getElementById('unassignedTickets').textContent = unassignedTickets;
-    document.getElementById('assignedTickets').textContent = assignedTickets;
+      // Calculate and update ticket statistics
+      const totalTickets = tickets.length;
+      const openTickets = tickets.filter(ticket => ticket.status === 'Open').length;
+      const closedTickets = tickets.filter(ticket => ticket.status === 'Closed').length;
+      const avgResponseTime = calculateAverageResponseTime(tickets);
+      const unassignedTickets = tickets.filter(ticket => !ticket.manager).length;
+      const assignedTickets = tickets.filter(ticket => ticket.manager).length;
 
-    // Populate ticket table
-    const ticketTableBody = document.getElementById('ticketTableBody');
-    tickets.forEach((ticket, index) => {
-      const row = document.createElement('tr');
-      row.className = ticket.status === 'Open' ? 'new-ticket' : '';
-      row.innerHTML = `
-      <td>${index + 1}</td>
-        <td>${ticket.tickitId}</td>
-        <td>${ticket.createdAt}</td>
-        <td>${ticket.fullName}</td>
-        <td>${ticket.email}</td>
-        <td>${ticket.subject}</td>
-        <td>${ticket.issueLocation}</td>
-        <td>${ticket.description}</td>
-        <td>${ticket.society}</td>
-        <td>${ticket.wingBuildingNo}</td>
-        <td>
-          <select onchange="updateStatus(${index}, this.value)">
-            <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>Open</option>
-            <option value="Closed" ${ticket.status === 'Closed' ? 'selected' : ''}>Closed</option>
-            <option value="Pending" ${ticket.status === 'Pending' ? 'selected' : ''}>Pending</option>
-          </select>
-        </td>
-        <td contenteditable="true">${ticket.priority || 'Normal'}</td>
-        <td>${ticket.lastUpdated || 'N/A'}</td>
-      
-        <td contenteditable="true">${ticket.instructionType || 'N/A'}</td>
-        <td contenteditable="true">${ticket.additionalRequirement || 'N/A'}</td>
-        <td contenteditable="true">${ticket.ticketStatus || 'Received'}</td>
-        <td contenteditable="true">${ticket.approvalFrom || 'N/A'}</td>
-        <td>
-          <select onchange="assignManager(${index}, this.value)">
-            <option value="">Unassigned</option>
-            ${managers.map(manager => `<option value="${manager.createUsername}" ${ticket.manager === manager.createUsername ? 'selected' : ''}>${manager.createUsername}</option>`).join('')}
-          </select>
-        </td>
-        <td>
-          <button onclick="editTicket(${index})">Edit</button>
-          <button onclick="updateTicket(${index})">Update</button>
-          <button onclick="deleteTicket(${index})">Delete</button>
-        </td>
-      `;
-      ticketTableBody.appendChild(row);
-    });
+      document.getElementById('totalTickets').textContent = totalTickets;
+      document.getElementById('openTickets').textContent = openTickets;
+      document.getElementById('closedTickets').textContent = closedTickets;
+      document.getElementById('avgResponseTime').textContent = avgResponseTime;
+      document.getElementById('unassignedTickets').textContent = unassignedTickets;
+      document.getElementById('assignedTickets').textContent = assignedTickets;
+    }
 
-    function deleteTicket(index) {
+    async function fetchManagers() {
+      const response = await fetch('http://127.0.0.1:5000/api/managers');
+      const managers = await response.json();
+      return managers;
+    }
+
+    async function deleteTicket(ticketId) {
       if (confirm('Are you sure you want to delete this ticket?')) {
-        tickets.splice(index, 1);
-        localStorage.setItem('tickets', JSON.stringify(tickets));
+        await fetch(`http://127.0.0.1:5000/api//tickets/${ticketId}`, {
+          method: 'DELETE'
+        });
+
+        alert('Ticket deleted successfully!');
         location.reload();
       }
     }
@@ -355,9 +361,6 @@
       const responseTimes = tickets
         .filter(ticket => ticket.status === 'Closed')
         .map(ticket => {
-          console.log("createdAt", ticket.createdAt);
-          console.log("closedAt", ticket.lastUpdated);
-
           const createdAt = parseCustomDate(ticket.createdAt);
           const closedAt = parseCustomDate(ticket.lastUpdated);
           return (closedAt - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
@@ -367,35 +370,44 @@
 
       const totalResponseTime = responseTimes.reduce((total, time) => total + time, 0);
       const avgResponseTime = totalResponseTime / responseTimes.length;
-      console.log("time", avgResponseTime);
-
       return `${avgResponseTime.toFixed(2)}h`;
     }
 
-    function assignManager(ticketIndex, managerUsername) {
-      tickets[ticketIndex].manager = managerUsername;
-      localStorage.setItem('tickets', JSON.stringify(tickets));
+    async function assignManager(ticketId, managerUsername) {
+      await fetch(`http://127.0.0.1:5000/api/tickets/${ticketId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ manager: managerUsername })
+      });
+
       location.reload();
     }
 
-    function updateStatus(index, status) {
+    async function updateStatus(ticketId, status) {
       const now = new Date();
       const options = { timeZone: 'Asia/Kolkata', hour12: false };
       const istTime = now.toLocaleString('en-IN', options);
-      tickets[index].status = status;
-      tickets[index].lastUpdated = istTime;
-      localStorage.setItem('tickets', JSON.stringify(tickets));
+      await fetch(`http://127.0.0.1:5000/api/tickets/${ticketId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: status, lastUpdated: istTime })
+      });
+
       location.reload();
     }
 
-    function editTicket(index) {
+    async function editTicket(index) {
       const row = ticketTableBody.rows[index];
       for (let i = 11; i <= 18; i++) {
         row.cells[i].contentEditable = "true";
       }
     }
 
-    function updateTicket(index) {
+    async function updateTicket(ticketId, index) {
       const row = ticketTableBody.rows[index];
       const updatedTicket = {
         tickitId: tickets[index].tickitId,
@@ -417,11 +429,24 @@
         manager: tickets[index].manager,
         approvalFrom: row.cells[17].innerText
       };
-      tickets[index] = updatedTicket;
-      localStorage.setItem('tickets', JSON.stringify(tickets));
+
+      await fetch(`http://127.0.0.1:5000/api/tickets/${ticketId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedTicket)
+      });
+
       alert('Ticket updated successfully!');
       location.reload();
     }
+
+    // Fetch and display data when the page loads
+    fetchManagers().then(managers => {
+      window.managers = managers;
+      fetchTickets();
+    });
   </script>
 </body>
 
