@@ -152,7 +152,8 @@
 
   <script>
     function logout() {
-      localStorage.removeItem('loggedId')
+      localStorage.removeItem('logedIn')
+      localStorage.removeItem("users");  // Store the users array
       window.location.href = 'login.html';
     }
 
@@ -177,16 +178,21 @@
       xhr.send();
     }
 
-    const allUsers = JSON.parse(localStorage.getItem('users')) || [];
-    const luser = localStorage.getItem("logedIn");
-    const userExists = allUsers.find(user => user.createUsername === luser);
-    console.log(userExists ? "User found" : "User not found");
-    if (userExists) {
-      document.getElementById('username').textContent = `Welcome, ${userExists.fullName}`;
-    } else {
-      alert('No user is logged in.');
-      window.location.href = 'login.html';
-    }
+    // const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+    // Dashboard Script
+const luser = localStorage.getItem("logedIn");
+const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+
+// Find user based on logged-in username
+const userExists = allUsers.find(user => user.createUsername === luser);
+
+if (userExists) {
+  document.getElementById('username').textContent = `Welcome, ${userExists.fullName}`;
+} else {
+  alert('No user is logged in.');
+  window.location.href = 'login.html';
+}
+
   </script>
 </body>
 

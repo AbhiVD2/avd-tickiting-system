@@ -7,21 +7,52 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
+      background-image: url('D:/Coding/html for society/logo/background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      margin: 0; /* Remove margin */
+    }
+    header {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      background-color: #f8f8f8;
+      padding: 10px 20px;
+      border-bottom: 1px solid #ddd;
+      width: 98%; /* Make header full width */
+      position: fixed; /* Fix header at the top */
+      top: 0; /* Align header to the top */
+      z-index: 1000; /* Ensure header is above other content */
+    }
+    nav {
+      display: flex;
+      justify-content: right;
+      align-items: center;
+      flex-grow: 1;
+    }
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
+      font-weight: bold; /* Make fonts bold */
+    }
+    .language {
+      margin-left: auto;
+    }
+    .logo {
+      margin-right: 20px;
     }
     .container {
       background-color: #fcf9f9;
-      padding: 20px;
+      padding: 5px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       width: 350px;
       text-align: center;
       position: relative;
+      margin-top: 110px; /* Adjust margin to account for fixed header */
+      margin-left: 100px; /* Adjust margin left */
     }
     h2 {
       margin-bottom: 20px;
@@ -103,10 +134,20 @@
   </style>
 </head>
 <body>
+  <header>
+    <a href="index.html" class="logo"><img src="logo\logo.webp" alt="Logo" height="60"></a>
+    <nav>
+      <a href="index.html">HOME</a>
+      <a href="login.html">LOGIN</a>
+      <a href="signup.html">REGISTER</a>
+      <a href="admin-login.html">AGENT LOGIN</a>
+      <a href="#">ALERTS</a>
+      <a href="#">CONTACT US</a>
+      <a href="#">HELP & SUPPORT</a>
+      <a href="#">FAQ</a>
+    </nav>
+  </header>
   <div class="container">
-    <button class="manager-button" onclick="window.location.href='signup-manager.html'">Manager</button>
-    <button class="home-button" onclick="window.location.href='login.html'">Home</button>
-    <br><br>
     <h2>Signup</h2>
     <form id="signupForm">
       <select id="userType" name="userType" required>
