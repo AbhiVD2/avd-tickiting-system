@@ -144,7 +144,7 @@
     <nav>
       <a href="index.html">HOME</a>
       <a href="login.html">LOGIN</a>
-      <a href="signup.html">REGISTER</a>
+      <!-- <a href="signup.html">REGISTER</a> -->
       <a href="admin-login.html">AGENT LOGIN</a>
       <a href="#">ALERTS</a>
       <a href="#">CONTACT US</a>
@@ -156,13 +156,13 @@
 
     <h2>Login KlugerKopf</h2>
     <form id="loginForm">
-      <div class="form-group radio-group">
-        <label>
+      <div class="form-group radio-group" style="display: flex; justify-content: space-around;">
+        <!-- <label>
           <input type="radio" name="selection" value="Owner" onclick="deselectOther('Owner')"> Owner
         </label>
         <label>
           <input type="radio" name="selection" value="SCT" onclick="deselectOther('SCT')"> SCT
-        </label>
+        </label> -->
       </div>
       <input type="text" id="username" name="username" placeholder="Username" required><br>
       <input type="password" id="password" name="password" placeholder="Password" required><br>
@@ -199,11 +199,11 @@
       const selection = document.querySelector('input[name="selection"]:checked') ? document.querySelector('input[name="selection"]:checked').value : '';
 
       // Make sure selection is made
-      if (!selection) {
-        document.getElementById('dialogMessage').innerText = 'Please select Owner or SCT';
-        document.getElementById('dialogBox').style.display = 'block';
-        return;
-      }
+      // if (!selection) {
+      //   document.getElementById('dialogMessage').innerText = 'Please select Owner or SCT';
+      //   document.getElementById('dialogBox').style.display = 'block';
+      //   return;
+      // }
 
       // Fetch users from API
       fetch('http://127.0.0.1:5000/api/users')
@@ -213,16 +213,16 @@
           // Find the user based on username, password, and user type
           const user = users.find(user =>
             user.createUsername === username &&
-            user.createPassword === password &&
-            user.userType === selection
+            user.createPassword === password 
+            // user.userType === selection
           );
 
           if (user) {
             localStorage.setItem("logedIn", username); // Store the logged-in username
             localStorage.setItem("users", JSON.stringify(users));  // Store the users array
-            if (selection === 'Owner') {
+            if (user.userType === 'Owner') {
               window.location.href = 'user-dashboard.html'; // Redirect to user dashboard
-            } else if (selection === 'SCT') {
+            } else if (user.userType === 'SCT') {
               window.location.href = 'sct-dashboard.html'; // Redirect to SCT dashboard
             }
           } else {
