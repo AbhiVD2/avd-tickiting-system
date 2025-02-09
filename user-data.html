@@ -38,11 +38,17 @@
       margin-bottom: 15px;
     }
 
+    .table-container {
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 400px; /* Adjust as needed */
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 20px;
-      table-layout: fixed;
+      table-layout: auto; /* Change to auto to fit columns */
     }
 
     table,
@@ -54,7 +60,7 @@
     th,
     td {
       padding: 8px 12px;
-      text-align: left;
+      text-align: center; /* Center align text in table cells */
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -178,28 +184,30 @@
 
   <div id="owners" class="tab-content active">
     <h2>Owner Details</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>User Type</th>
-          <th>Full Name</th>
-          <th>Mobile No</th>
-          <th>Email ID</th>
-          <th>Username</th>
-          <th>Password</th>
-          <th>Society Name</th>
-          <th>Society Address</th>
-          <th>Wing/Building No</th>
-          <th>Flat No</th>
-          <th>Flat Owner Name</th>
-          <th>Edit</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody id="userData">
-        <!-- User data will be populated here -->
-      </tbody>
-    </table>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>User Type</th>
+            <th>Full Name</th>
+            <th>Mobile No</th>
+            <th>Email ID</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Society Name</th>
+            <th>Society Address</th>
+            <th>Wing/Building No</th>
+            <th>Flat No</th>
+            <th>Flat Owner Name</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="userData">
+          <!-- User data will be populated here -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div id="deleted" class="tab-content">
@@ -351,6 +359,8 @@
           });
           alert('User deleted successfully!');
           fetchUsers(); // Refresh the user data
+          showTab('deleted'); // Open the Deleted Users tab
+          location.reload(); // Reload the page
         } catch (error) {
           console.error('Error deleting user:', error);
         }

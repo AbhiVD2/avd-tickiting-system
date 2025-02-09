@@ -8,12 +8,12 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-image: url('D:/Coding/html for society/logo/background.jpg');
+      background-image: url('logo/pexels-davidmcbee-1546166.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       margin: 0;
-      /* Remove margin */
+      padding-top: 940px; /* Add padding to start background after header */
     }
 
     header {
@@ -63,11 +63,11 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       width: 350px;
       text-align: center;
-      position: relative;
-      margin-top: 250px;
-      /* Adjust margin to account for fixed header */
-      margin-left: 100px;
-      /* Adjust margin left */
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      /* Center the container */
     }
 
     h2 {
@@ -138,6 +138,7 @@
 </head>
 
 <body>
+
   <header>
     <a href="index.html" class="logo"><img src="logo\logo.webp" alt="Logo" height="60"></a>
     <nav>
@@ -152,6 +153,7 @@
     </nav>
   </header>
   <div class="container">
+
     <h2>Login KlugerKopf</h2>
     <form id="loginForm">
       <div class="form-group radio-group">
@@ -218,8 +220,11 @@
           if (user) {
             localStorage.setItem("logedIn", username); // Store the logged-in username
             localStorage.setItem("users", JSON.stringify(users));  // Store the users array
-            window.location.href = 'user-dashboard.html'; // Redirect to user dashboard
-
+            if (selection === 'Owner') {
+              window.location.href = 'user-dashboard.html'; // Redirect to user dashboard
+            } else if (selection === 'SCT') {
+              window.location.href = 'sct-dashboard.html'; // Redirect to SCT dashboard
+            }
           } else {
             document.getElementById('dialogMessage').innerText = 'Account Details Not Found!!!';
             document.getElementById('dialogBox').style.display = 'block';
