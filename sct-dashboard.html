@@ -183,6 +183,23 @@
       margin-top: 60px;
 
     }
+
+    .logout-button {
+      position: absolute;
+      bottom: 20px;
+      width: 90%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 10px 0;
+    }
+
+    .logout-button:hover {
+      background-color: #45a049;
+    }
   </style>
 </head>
 
@@ -205,11 +222,13 @@
         <a href="javascript:void(0);" onclick="loadContent('personal-details.html')">
           <i class="fas fa-user"></i><span>Personal Details</span>
         </a>
+        <a href="javascript:void(0);" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+        </a>
       </div>
       <div class="content">
         <div class="header">
           <h1 id="username"></h1>
-          <button class="logout" onclick="logout()">Logout</button>
         </div>
 
         <div id="dynamicContent">
@@ -228,8 +247,9 @@
 
   <script>
     function logout() {
-      localStorage.removeItem('loggedId')
-      window.location.href = 'login.html';
+      localStorage.removeItem('logedIn')
+      localStorage.removeItem('users')
+      window.location.href = 'u-login.html';
     }
 
     function loadContent(url) {
@@ -261,7 +281,7 @@
       document.getElementById('username').textContent = `Welcome, ${userExists.fullName}`;
     } else {
       alert('No user is logged in.');
-      window.location.href = 'login.html';
+      window.location.href = 'u-login.html';
     }
   </script>
 </body>

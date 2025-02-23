@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Dashboard</title>
+  <title>Owner Dashboard</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
@@ -15,9 +15,9 @@
       padding: 0;
     }
 
-    header {
-      background-color: #333;
-      color: white;
+    nav {
+      display: flex;
+      justify-content: center;
       padding: 10px 0;
       text-align: center;
     }
@@ -65,7 +65,7 @@
       background-color: #294192;
       width: 60px;
       height: 100vh;
-      padding: 110px 15px;
+      padding: 15px;
       box-sizing: border-box;
       position: fixed;
       top: 0;
@@ -76,6 +76,30 @@
 
     .sidebar:hover {
       width: 200px;
+    }
+
+    .sidebar .profile {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      transition: margin 0.3s;
+    }
+
+    .sidebar .profile img {
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    .sidebar .profile span {
+      display: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    .sidebar:hover .profile span {
+      display: inline;
     }
 
     .sidebar a {
@@ -173,8 +197,8 @@
     .ticket-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 20px;
-      margin-top: 300px;
+      gap: 30px;
+      margin-top: 188px; /* Adjusted margin-top */
 
     }
 
@@ -196,6 +220,10 @@
   <div class="main">
     <div class="container-sidebar-form">
       <div class="sidebar">
+        <div class="profile">
+          <img src="profile-photo.jpg" alt="Profile Photo">
+          <span id="username"></span>
+        </div>
         <a href="javascript:void(0);" onclick="loadContent('dashboard.html')">
           <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
         </a>
@@ -211,11 +239,16 @@
         <a href="javascript:void(0);" onclick="loadContent('personal-details.html')">
           <i class="fas fa-user"></i><span>Personal Details</span>
         </a>
+        <a href="javascript:void(0);" onclick="loadContent('settings.html')">
+          <i class="fas fa-cog"></i><span>Settings</span>
+        </a>
+        <a href="javascript:void(0);" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+        </a>
       </div>
       <div class="content">
         <div class="header">
           <h1 id="username"></h1>
-          <button class="logout" onclick="logout()">Logout</button>
         </div>
 
         <div id="dynamicContent">
@@ -236,7 +269,7 @@
     function logout() {
       localStorage.removeItem('logedIn')
       localStorage.removeItem("users");  // Store the users array
-      window.location.href = 'login.html';
+      window.location.href = 'u-login.html';
     }
 
     function loadContent(url) {
@@ -269,12 +302,22 @@
     const userExists = allUsers.find(user => user.createUsername === luser);
 
     if (userExists) {
-      document.getElementById('username').textContent = `Welcome, ${userExists.fullName}`;
+      document.getElementById('username').textContent = ` ${userExists.fullName}`;
+      document.getElementById('profileName').textContent = userExists.fullName;
+      // Automatically load the dashboard content
+      loadContent('dashboard.html');
     } else {
       alert('No user is logged in.');
-      window.location.href = 'login.html';
+      window.location.href = 'u-login.html';
     }
 
+    // Redirect to dashboard section on page refresh
+    window.onload = function() {
+      if (!window.location.hash) {
+        window.location = window.location + '#home';
+        window.location.reload();
+      }
+    };
   </script>
 </body>
 
