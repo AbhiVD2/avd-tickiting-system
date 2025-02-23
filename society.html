@@ -112,10 +112,10 @@
 
 <body>
   <div class="header">
-    <a href="admin-dashboard.html">Dashboard</a>
-    <a href="user-data.html">Users Data</a>
+    <a href="a-admin-dashboard.html">Dashboard</a>
+    <a href="m-user-data.html">Users Data</a>
     <a href="ticket-dashboard.html">Ticket Dashboard</a>
-    <a href="society.html">Society</a>
+    <!-- <a href="society.html">Society</a> -->
     <a href="services.html">Services</a>
   </div>
   <div class="content">
@@ -140,6 +140,8 @@
   </div>
 
   <script>
+    let managers = [];
+
     // Function to fetch and display societies from the API
     function fetchSocieties() {
       fetch('http://127.0.0.1:5000/api/societies')
@@ -155,38 +157,46 @@
     function fetchManagers() {
       return fetch('http://127.0.0.1:5000/api/managers')
         .then(response => response.json())
+        .then(data => {
+          managers = data;
+        })
         .catch(error => console.error('Error fetching managers:', error));
     }
 
     // Function to populate the table with society data
-    async function populateTable() {
-      const societyDataTable = document.getElementById('societyData');
-      societyDataTable.innerHTML = '';
-      const managers = await fetchManagers();
-      societyData.forEach((society, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+    function populateTable() {
+  const societyDataTable = document.getElementById('societyData');
+  societyDataTable.innerHTML = ''; // Clear any previous data
+  societyData.forEach((society, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
       <td><input type="text" value="${society.name}" disabled></td>
       <td><input type="text" value="${society.address}" disabled></td>
       <td><input type="text" value="${society.incharge}" disabled></td>
       <td><input type="text" value="${society.contact}" disabled></td>
       <td>
-        <select disabled>
-          ${managers.map(manager => `<option value="${manager.fullName}" ${manager.fullName === society.fullName ? 'selected' : ''}>${manager.fullName}</option>`).join('')}
+       
+        <select class="manager-dropdown" disabled>
+          ${managers.map(manager => `<option value="${manager._id}" ${manager._id === society.managerId ? 'selected' : ''}>${manager.fullName}</option>`).join('')}
         </select>
       </td>
       <td><button class="edit-button" onclick="editSociety(${index}, this)">Edit</button></td>
       <td><button class="delete-button" onclick="deleteSociety('${society._id}')">Delete</button></td>
     `;
-        societyDataTable.appendChild(row);
-      });
-    }
+    societyDataTable.appendChild(row);
+  });
+}
+
 
     // Function to edit a society
-    function editSociety(index, button) {
+    async function editSociety(index, button) {
       const row = button.parentElement.parentElement;
       const inputs = row.querySelectorAll('input, select');
       const isEditing = button.textContent === 'Edit';
+
+      if (isEditing && managers.length === 0) {
+        await fetchManagers();
+      }
 
       inputs.forEach(input => input.disabled = !isEditing);
       button.textContent = isEditing ? 'Save' : 'Edit';
@@ -242,13 +252,13 @@
           newSociety._id = data.id;  // Add the returned id to the new society
           societyData.push(newSociety);
           populateTable();  // Refresh the table with the new society
-          alert('New society added successfully!');
+          // alert('New society added successfully!');
         })
         .catch(error => console.error('Error adding society:', error));
     }
 
     // Initialize the table with the data from the API
-    fetchSocieties();
+    fetchManagers().then(fetchSocieties);
 
   </script>
 </body>
