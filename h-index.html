@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('D:/Coding/html for society/logo/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f8f8;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        nav {
+            display: flex;
+            justify-content: right;
+            align-items: center;
+            flex-grow: 1;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold; /* Make fonts bold */
+        }
+        .language {
+            margin-left: auto;
+        }
+        .logo {
+            margin-right: 20px;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown::after {
+            content: ' \25BC'; /* Unicode for down arrow */
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+    </style>
+    <script>
+        // Removed updateTime function and setInterval call
+    </script>
+</head>
+<body>
+    <header>
+        <a href="h-index.html" class="logo"><img src="logo\logo.webp" alt="Logo" height="60"></a>
+        <nav>
+            <!-- <a href="index.html">HOME</a> -->
+            <a href="u-login.html">LOGIN</a>
+            <!-- <a href="signup.html">REGISTER</a> -->
+            <div class="dropdown">
+                <a href=>AGENT LOGIN</a>
+                <div class="dropdown-content">
+                    <a href="m-login-manager.html">Manager Login</a>
+                    <a href="a-admin-login.html">Admin Login</a>
+                </div>
+            </div>
+            <a href="#">ALERTS</a>
+            <a href="#">CONTACT US</a>
+            <a href="#">HELP & SUPPORT</a>
+            <a href="#">FAQ</a>
+        </nav>
+        <!-- Removed date-time div -->
+    </header>
+</body>
+</html>
