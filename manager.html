@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,23 +12,33 @@
       margin: 0;
       padding: 20px;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 20px;
+      table-layout: auto;
+      /* Change to auto to fit columns */
     }
-    table, th, td {
+
+    table,
+    th,
+    td {
       border: 1px solid #ccc;
     }
-    th, td {
+
+    th,
+    td {
       padding: 10px;
       text-align: left;
       white-space: nowrap;
     }
+
     th {
       background-color: #4CAF50;
       color: white;
     }
+
     .header {
       background-color: #4CAF50;
       padding: 10px;
@@ -36,16 +47,22 @@
       margin-bottom: 20px;
       position: relative;
     }
+
     .header a {
       color: white;
       margin: 0 15px;
       text-decoration: none;
       font-weight: bold;
     }
+
     .header a:hover {
       text-decoration: underline;
     }
-    .edit-button, .delete-button, .save-button, .restore-button {
+
+    .edit-button,
+    .delete-button,
+    .save-button,
+    .restore-button {
       background-color: #4CAF50;
       color: white;
       padding: 5px 10px;
@@ -53,33 +70,48 @@
       border-radius: 4px;
       cursor: pointer;
     }
-    .edit-button:hover, .save-button:hover, .restore-button:hover {
+
+    .edit-button:hover,
+    .save-button:hover,
+    .restore-button:hover {
       background-color: #45a049;
     }
+
     .delete-button {
       background-color: #f44336;
     }
+
     .delete-button:hover {
       background-color: #d32f2f;
     }
+
     @media (max-width: 768px) {
       .header {
         flex-direction: column;
         align-items: center;
       }
+
       .header a {
         margin: 5px 0;
       }
-      table, th, td {
+
+      table,
+      th,
+      td {
         font-size: 14px;
       }
-      .edit-button, .delete-button, .save-button, .restore-button {
+
+      .edit-button,
+      .delete-button,
+      .save-button,
+      .restore-button {
         padding: 5px;
         font-size: 12px;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="header">
     <a href="admin-dashboard.html">Dashboard</a>
@@ -90,6 +122,7 @@
     <a href="services.html">Services</a>
   </div>
   <h2>Manager Details</h2>
+  <button class="add-button" onclick="addManager()">+</button>
   <table>
     <thead>
       <tr>
@@ -97,8 +130,8 @@
         <th>Mobile No</th>
         <th>Username</th>
         <th>Password</th>
-        <th>Society Name</th>
-        <th>Society Address</th>
+        <!-- <th>Society Name</th>
+        <th>Society Address</th> -->
         <th>Edit</th>
         <th>Delete</th>
       </tr>
@@ -116,8 +149,8 @@
         <th>Mobile No</th>
         <th>Username</th>
         <th>Password</th>
-        <th>Society Name</th>
-        <th>Society Address</th>
+        <!-- <th>Society Name</th>
+        <th>Society Address</th> -->
         <th>Restore</th>
         <th>Delete</th>
       </tr>
@@ -128,43 +161,47 @@
   </table>
 
   <script>
-    const managers = JSON.parse(localStorage.getItem('managers')) || [];
-    const deletedManagers = JSON.parse(localStorage.getItem('deletedManagers')) || [];
+    async function fetchManagers() {
+      const response = await fetch('http://127.0.0.1:5000/api/managers');
+      const managers = await response.json();
+      const managerDataTable = document.getElementById('managerData');
 
-    const managerDataTable = document.getElementById('managerData');
-    const deletedManagerDataTable = document.getElementById('deletedManagerData');
+      managers.forEach((manager, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><input type="text" value="${manager.fullName}" disabled></td>
+          <td><input type="text" value="${manager.mobileNo}" disabled></td>
+          <td><input type="text" value="${manager.createUsername}" disabled></td>
+          <td><input type="text" value="${manager.createPassword}" disabled></td>
+          <td><button class="edit-button" onclick="editManager('${manager._id}', this)">Edit</button></td>
+          <td><button class="delete-button" onclick="deleteManager('${manager._id}')">Delete</button></td>
+        `;
+        managerDataTable.appendChild(row);
+      });
+    }
 
-    managers.forEach((manager, index) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td><input type="text" value="${manager.fullName}" disabled></td>
-        <td><input type="text" value="${manager.mobileNo}" disabled></td>
-        <td><input type="text" value="${manager.createUsername}" disabled></td>
-        <td><input type="text" value="${manager.createPassword}" disabled></td>
-        <td><input type="text" value="${manager.societyName}" disabled></td>
-        <td><input type="text" value="${manager.societyAddress}" disabled></td>
-        <td><button class="edit-button" onclick="editManager(${index}, this)">Edit</button></td>
-        <td><button class="delete-button" onclick="deleteManager(${index})">Delete</button></td>
-      `;
-      managerDataTable.appendChild(row);
-    });
+    async function fetchDeletedManagers() {
+      const response = await fetch('http://127.0.0.1:5000/api/deleted_managers');
+      const deletedManagers = await response.json();
+      const deletedManagerDataTable = document.getElementById('deletedManagerData');
 
-    deletedManagers.filter(manager => manager.userType !== 'User').forEach((manager, index) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${manager.fullName}</td>
-        <td>${manager.mobileNo}</td>
-        <td>${manager.createUsername}</td>
-        <td>${manager.createPassword}</td>
-        <td>${manager.societyName}</td>
-        <td>${manager.societyAddress}</td>
-        <td><button class="restore-button" onclick="restoreManager(${index})">Restore</button></td>
-        <td><button class="delete-button" onclick="permanentlyDeleteManager(${index})">Delete</button></td>
-      `;
-      deletedManagerDataTable.appendChild(row);
-    });
+      deletedManagers.forEach((manager, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${manager.fullName}</td>
+          <td>${manager.mobileNo}</td>
+          <td>${manager.createUsername}</td>
+          <td>${manager.createPassword}</td>
+          <td>${manager.societyName}</td>
+          <td>${manager.societyAddress}</td>
+          <td><button class="restore-button" onclick="restoreManager('${manager._id}')">Restore</button></td>
+          <td><button class="delete-button" onclick="permanentlyDeleteManager('${manager._id}')">Delete</button></td>
+        `;
+        deletedManagerDataTable.appendChild(row);
+      });
+    }
 
-    function editManager(index, button) {
+    async function editManager(managerId, button) {
       const row = button.parentElement.parentElement;
       const inputs = row.querySelectorAll('input');
       const isEditing = button.textContent === 'Edit';
@@ -178,52 +215,82 @@
           mobileNo: inputs[1].value,
           createUsername: inputs[2].value,
           createPassword: inputs[3].value,
-          societyName: inputs[4].value,
-          societyAddress: inputs[5].value
         };
 
-        managers[index] = updatedManager;
-        localStorage.setItem('managers', JSON.stringify(managers));
-        alert('Manager data updated successfully!');
+        console.log(updatedManager); // Log the updated manager data
+
+        const response = await fetch(`http://127.0.0.1:5000/api/managers/${managerId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedManager)
+        });
+
+        if (response.ok) {
+          alert('Manager data updated successfully!');
+        } else {
+          const errorData = await response.json();
+          alert(`Error: ${errorData.message}`);
+        }
       }
     }
 
-    function deleteManager(index) {
+
+    async function deleteManager(managerId) {
       if (confirm('Are you sure you want to delete this manager?')) {
-        const manager = managers.splice(index, 1)[0];
-        manager.deletedAt = new Date().toISOString();
-        deletedManagers.push(manager);
-        localStorage.setItem('managers', JSON.stringify(managers));
-        localStorage.setItem('deletedManagers', JSON.stringify(deletedManagers));
+        await fetch(`http://127.0.0.1:5000/api/managers/${managerId}`, {
+          method: 'DELETE'
+        });
+
+        alert('Manager deleted successfully!');
         location.reload();
       }
     }
 
-    function restoreManager(index) {
-      const manager = deletedManagers.splice(index, 1)[0];
-      delete manager.deletedAt;
-      managers.push(manager);
-      localStorage.setItem('managers', JSON.stringify(managers));
-      localStorage.setItem('deletedManagers', JSON.stringify(deletedManagers));
+    async function restoreManager(managerId) {
+      await fetch(`http://127.0.0.1:5000/api/deleted_managers/${managerId}/restore`, {
+        method: 'PUT'
+      });
+
+      // alert('Manager restored successfully!');
       location.reload();
     }
 
-    function permanentlyDeleteManager(index) {
+    async function permanentlyDeleteManager(managerId) {
       if (confirm('Are you sure you want to permanently delete this manager?')) {
-        deletedManagers.splice(index, 1);
-        localStorage.setItem('deletedManagers', JSON.stringify(deletedManagers));
+        await fetch(`http://127.0.0.1:5000/api/managers/permanent_delete/${managerId}`, {
+          method: 'DELETE'
+        });
+
+        // alert('Manager permanently deleted successfully!');
         location.reload();
       }
     }
 
-    function cleanUpDeletedManagers() {
-      const now = new Date();
-      const oneMonthAgo = new Date(now.setMonth(now.getMonth() - 1));
-      const updatedDeletedManagers = deletedManagers.filter(manager => new Date(manager.deletedAt) > oneMonthAgo);
-      localStorage.setItem('deletedManagers', JSON.stringify(updatedDeletedManagers));
+    // Function to add a new society
+    function addManager() {
+      const newManager = { fullName: "", mobileNo: "", createUsername: "", createPassword: "", societyName: "", societyAddress: "" };
+
+      fetch('http://127.0.0.1:5000/api/managers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newManager)
+      })
+        .then(response => response.json())
+        .then(data => {
+          newManager._id = data.id;  // Add the returned id to the new manager
+          location.reload(); // Refresh the table with the new manager
+        })
+        .catch(error => console.error('Error adding manager:', error));
     }
 
-    cleanUpDeletedManagers();
+    // Fetch and display data when the page loads
+    fetchManagers();
+    fetchDeletedManagers();
   </script>
 </body>
+
 </html>
