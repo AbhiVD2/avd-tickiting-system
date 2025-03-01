@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Society</title>
-  <style>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Society</title>
+    <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f0f0f0;
@@ -108,38 +108,38 @@
       background-color: #d32f2f;
     }
   </style>
-</head>
+  </head>
 
-<body>
-  <div class="header">
-    <a href="a-admin-dashboard.html">Dashboard</a>
-    <a href="m-user-data.html">Users Data</a>
-    <a href="ticket-dashboard.html">Ticket Dashboard</a>
-    <!-- <a href="society.html">Society</a> -->
-    <a href="services.html">Services</a>
-  </div>
-  <div class="content">
-    <h2>Society Details</h2>
-    <button class="add-button" onclick="addSociety()">+</button>
-    <table>
-      <thead>
-        <tr>
-          <th>Society Name</th>
-          <th>Address</th>
-          <th>Incharge Name</th>
-          <th>Contact</th>
-          <th>Manager</th>
-          <th>Edit</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody id="societyData">
-        <!-- Society data will be populated here -->
-      </tbody>
-    </table>
-  </div>
+  <body>
+    <div class="header">
+      <a href="a-admin-dashboard.html">Dashboard</a>
+      <a href="m-user-data.html">Users Data</a>
+      <a href="ticket-dashboard.html">Ticket Dashboard</a>
+      <!-- <a href="society.html">Society</a> -->
+      <a href="services.html">Services</a>
+    </div>
+    <div class="content">
+      <h2>Society Details</h2>
+      <button class="add-button" onclick="addSociety()">+</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Society Name</th>
+            <th>Address</th>
+            <th>Incharge Name</th>
+            <th>Contact</th>
+            <th>Manager</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="societyData">
+          <!-- Society data will be populated here -->
+        </tbody>
+      </table>
+    </div>
 
-  <script>
+    <script>
     let managers = [];
 
     // Function to fetch and display societies from the API
@@ -261,6 +261,6 @@
     fetchManagers().then(fetchSocieties);
 
   </script>
-</body>
+  </body>
 
 </html>
