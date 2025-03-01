@@ -46,6 +46,7 @@
 
     .container {
       padding: 20px;
+      margin-top: -27px;
     }
 
     .card {
@@ -62,8 +63,10 @@
       display: flex;
       justify-content: flex-start;
       height: 100vh;
+      width: 1000vh;
       margin: 0;
       align-items: center;
+      flex-direction: column;
     }
 
     .sidebar {
@@ -140,8 +143,8 @@
     }
 
     .content {
-      margin: 70px;
-      padding: 30px;
+      margin: auto; /* Center the content */
+      padding: 10px;
       flex: 1;
       width: calc(100% - 80px);
       box-sizing: border-box;
@@ -178,17 +181,11 @@
       margin: 10px 0;
     }
 
-    .ticket-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-      margin-top: 188px; /* Adjusted margin-top */
-    }
 
     .issue-ticket,
     .ticket-status {
       flex: 10;
-      min-width: 300px;
+      min-width: 30px;
     }
 
     .container-sidebar-form {
@@ -224,37 +221,52 @@
               <img src="profile-photo.jpg" alt="Profile Photo">
               <span id="username"></span>
             </div>
+            <script>
+              document.addEventListener("DOMContentLoaded", function() {
+                loadContent('memberdashboard.html'); // Load memberdashboard.html on page refresh
+              });
+            
+              function onLogin() {
+                loadContent('memberdashboard.html'); // Load memberdashboard.html after login
+              }
+            </script>
             <a href="javascript:void(0);"
-              onclick="loadContent('dashboard.html')">
+              onclick="loadContent('memberdashboard.html')" id="dashboardLink">
               <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
             </a>
-            <a href="javascript:void(0);" onclick="loadContent('events.html')">
+            <a href="javascript:void(0);" onclick="loadContent('events.html')" id="eventsLink" style="display:none;">
               <i class="fas fa-calendar-alt"></i><span>Event</span>
             </a>
+            
+            <script>
+              // Example user type
+              var userType = "SCT";  // Change this value to test
+            
+              // Check user type and show/hide the link accordingly
+              if (userType === "SCT") {
+                document.getElementById('eventsLink').style.display = 'inline';  // Show the link
+              } else {
+                document.getElementById('eventsLink').style.display = 'none';  // Hide the link
+              }
+            </script>
+            
             <a href="javascript:void(0);"
-              onclick="loadContent('ticket-submission.html')">
+              onclick="loadContent('ticket-submission.html')" id="complaintsLink">
               <i class="fas fa-ticket-alt"></i><span>Complaint</span>
             </a>
             <a href="javascript:void(0);"
-              onclick="loadContent('m-emergency-contacts .html')">
+              onclick="loadContent('m-emergency-contacts.html')" id="emergencyContactsLink">
               <i class="fas fa-phone-alt"></i><span>Emergency Contacts</span>
             </a>
             <a href="javascript:void(0);"
-              onclick="loadContent('personal-details.html')">
-              <i class="fas fa-user"></i><span>Personal Details</span>
+              onclick="loadContent('personal-details.html')" id="profileLink">
+              <i class="fas fa-user"></i><span>Profile</span>
             </a>
-            <!-- <a href="javascript:void(0);" onclick="loadContent('settings.html')">
-              <i class="fas fa-cog"></i><span>Settings</span>
-            </a> -->
             <a href="javascript:void(0);" onclick="logout()">
               <i class="fas fa-sign-out-alt"></i><span>Logout</span>
             </a>
           </div>
           <div class="content">
-            <!-- <div class="header">
-              <h1 id="username"></h1>
-            </div> -->
-
             <div id="dynamicContent">
               <div class="ticket-container">
                 <div class="issue-ticket">
@@ -274,7 +286,7 @@
     function logout() {
       localStorage.removeItem('logedIn')
       localStorage.removeItem("users");  // Store the users array
-      window.location.href = 'login.html';
+      window.location.href = 'u-login.html';
     }
 
     function loadContent(url) {
@@ -309,9 +321,15 @@
     if (userExists) {
       document.getElementById('username').textContent = ` ${userExists.fullName}`;
       document.getElementById('profileName').textContent = userExists.fullName;
+
+      if (userExists.userType === 'SCT') {
+        document.getElementById('eventsLink').style.display = 'block';
+      } else {
+        document.getElementById('eventsLink').style.display = 'none';
+      }
     } else {
       alert('No user is logged in.');
-      window.location.href = 'login.html';
+      window.location.href = 'u-login.html';
     }
 
     // Redirect to dashboard section on page refresh
