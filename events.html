@@ -66,23 +66,17 @@
     </div>
 
     <script>
-        const apiUrl = 'http://127.0.0.1:5000/api/events';
+        const apiUrl = 'http://127.0.0.1:5000/api/events';  // API URL for Events
         const modal = document.getElementById('addEventModal');
         const addEventForm = document.getElementById('addEventForm');
+        let editingEventId = null;  // Variable to track if editing an event
 
-        // Fetch users and deleted users from the API
-    async function fetchUsers() {
-      try {
-        const response = await fetch(API_URL);
-        const users = await response.json();
-        populateUserData(users);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    }
-
-        // Open Modal
-        document.getElementById('addEventBtn').addEventListener('click', () => modal.classList.remove('hidden'));
+        // Open Modal for Adding a New Event
+        document.getElementById('addEventBtn').addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            editingEventId = null;  // Reset editing
+            addEventForm.reset();
+        });
 
         // Close Modal on Cancel Button
         document.getElementById('cancelBtn').addEventListener('click', () => modal.classList.add('hidden'));
@@ -92,7 +86,9 @@
             if (event.key === "Escape") modal.classList.add('hidden');
         });
 
-        // Load Events
+        // Load Events on Page Load
+        document.addEventListener('DOMContentLoaded', loadEvents);
+
         function loadEvents() {
             fetch(apiUrl)
                 .then(response => response.json())
@@ -117,14 +113,29 @@
                 <td class="px-6 py-4">${event.time}</td>
                 <td class="px-6 py-4">${event.location}</td>
                 <td class="px-6 py-4">
-                    <button class="bg-yellow-500 text-white px-2 py-1 rounded-lg" onclick="editEvent(${event.id}, this)">Edit</button>
-                    <button class="bg-red-500 text-white px-2 py-1 rounded-lg" onclick="deleteEvent(${event.id})">Delete</button>
+                    <button class="bg-yellow-500 text-white px-2 py-1 rounded-lg" onclick="editEvent(${event._id}, this)">Edit</button>
+                    <button class="bg-red-500 text-white px-2 py-1 rounded-lg" onclick="deleteEvent(${event._id})">Delete</button>
                 </td>
             `;
             tableBody.appendChild(row);
         }
 
-        // Add Event (Submit to API & Update Table)
+        // Edit Event
+        function editEvent(eventId, button) {
+            fetch(`${apiUrl}/${eventId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('eventTitle').value = data.title;
+                    document.getElementById('eventDate').value = data.date.split('T')[0];
+                    document.getElementById('eventTime').value = data.time.split('T')[1].slice(0, 5);
+                    document.getElementById('eventLocation').value = data.location;
+                    modal.classList.remove('hidden');
+                    editingEventId = eventId;
+                })
+                .catch(error => console.error('Error fetching event for editing:', error));
+        }
+
+        // Add or Update Event
         addEventForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const newEvent = {
@@ -134,29 +145,43 @@
                 location: document.getElementById('eventLocation').value
             };
 
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newEvent)
-            })
-            .then(response => response.json())
-            .then(data => {
-                addEventToTable(document.getElementById('eventsTableBody').children.length + 1, data);
-                modal.classList.add('hidden');
-                addEventForm.reset();
-            })
-            .catch(error => console.error('Error adding event:', error));
+            if (editingEventId) {
+                // Update event
+                fetch(`${apiUrl}/${editingEventId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newEvent)
+                })
+                .then(response => response.json())
+                .then(() => {
+                    loadEvents();
+                    modal.classList.add('hidden');
+                    addEventForm.reset();
+                })
+                .catch(error => console.error('Error updating event:', error));
+            } else {
+                // Create new event
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newEvent)
+                })
+                .then(response => response.json())
+                .then(() => {
+                    loadEvents();
+                    modal.classList.add('hidden');
+                    addEventForm.reset();
+                })
+                .catch(error => console.error('Error adding event:', error));
+            }
         });
 
         // Delete Event
         function deleteEvent(eventId) {
             fetch(`${apiUrl}/${eventId}`, { method: 'DELETE' })
-            .then(() => loadEvents())
-            .catch(error => console.error('Error deleting event:', error));
+                .then(() => loadEvents())
+                .catch(error => console.error('Error deleting event:', error));
         }
-
-        // Load events on page load
-        document.addEventListener('DOMContentLoaded', loadEvents);
     </script>
 </body>
 
