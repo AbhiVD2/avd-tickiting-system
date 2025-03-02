@@ -5,257 +5,116 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Data</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
+    .sidebar {
+      width: 250px;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #333;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
     }
 
-    .header {
-      background-color: #4CAF50;
-      padding: 10px;
-      text-align: center;
-      color: white;
-      margin-bottom: 20px;
-    }
-
-    .header a {
-      color: white;
-      margin: 0 15px;
+    .sidebar a {
+      padding: 10px 15px;
       text-decoration: none;
-      font-weight: bold;
-    }
-
-    .header a:hover {
-      text-decoration: underline;
-    }
-
-    h2 {
-      color: #333;
-      margin-bottom: 15px;
-    }
-
-    .table-container {
-      overflow-x: auto;
-      overflow-y: auto;
-      max-height: 400px; /* Adjust as needed */
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-      table-layout: auto; /* Change to auto to fit columns */
-    }
-
-    table,
-    th,
-    td {
-      border: 1px solid #ccc;
-    }
-
-    th,
-    td {
-      padding: 8px 12px;
-      text-align: center; /* Center align text in table cells */
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    th {
-      background-color: #4CAF50;
+      font-size: 18px;
       color: white;
-    }
-
-    .edit-button,
-    .delete-button,
-    .save-button,
-    .restore-button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 5px 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .edit-button:hover,
-    .save-button:hover,
-    .restore-button:hover {
-      background-color: #45a049;
-    }
-
-    .delete-button {
-      background-color: #f44336;
-    }
-
-    .delete-button:hover {
-      background-color: #d32f2f;
-    }
-
-    .tabs {
       display: flex;
-      justify-content: flex-start;
-      margin-bottom: 20px;
+      align-items: center;
+      gap: 10px;
+      transition: 0.3s;
     }
 
-    .tabs button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin: 0 5px;
+    .sidebar a:hover {
+      background-color: #575757;
     }
 
-    .tabs button:hover {
-      background-color: #45a049;
-    }
-
-    .tabs button.active {
-      background-color: #45a049;
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .add-button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 24px;
-      width: 40px;
-      height: 40px;
-      text-align: center;
-      line-height: 20px;
-    }
-
-    .add-button:hover {
-      background-color: #45a049;
-    }
-    
-    @media (max-width: 768px) {
-      table,
-      th,
-      td {
-        font-size: 14px;
-      }
-
-      .edit-button,
-      .delete-button,
-      .save-button,
-      .restore-button {
-        padding: 5px;
-        font-size: 12px;
-      }
-
-      .header {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .header a {
-        margin: 5px 0;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .tabs {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .tabs button {
-        margin: 5px 0;
-      }
+    .main-content {
+      margin-left: 250px;
+      transition: margin-left 0.5s;
+      padding: 20px;
     }
   </style>
 </head>
 
-<body>
-  <div class="header">
-    <a href="a-admin-dashboard.html">Dashboard</a>
-    <a href="m-user-data.html">Users Data</a>
-    <a href="manager.html">Manager</a>
-    <a href="ticket-dashboard.html">Ticket Dashboard</a>
-    <a href="society.html">Society</a>
-    <a href="services.html">Services</a>
-  </div>
-  <!-- <button class="add-button" onclick="addSociety()">+</button> -->
-  <!-- <button class="add-button" onclick="addUser()">+</button> -->
-  <div class="tabs">
-    <button onclick="showTab('owners')" class="tab-button active">Live Owner</button>
-    <button onclick="showTab('deleted')" class="tab-button">Deleted Users</button>
+<body class="bg-gray-100 font-sans">
+  <div class="sidebar">
+    <a href="a-admin-dashboard.html"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+    <a href="m-user-data.html"><i class="fas fa-users"></i>Society Staff</a>
+    <a href="manager.html"><i class="fas fa-user-tie"></i>Managers</a>
+    <a href="ticket-dashboard.html"><i class="fas fa-ticket-alt"></i>Ticket Dashboard</a>
+    <a href="society.html"><i class="fas fa-building"></i>Society</a>
+    <a href="services.html"><i class="fas fa-briefcase"></i>Services</a>
+    <a href="a-admin-login.html" onclick="logout()" id="logoutBtn" class="hidden"><i class="fas fa-sign-out-alt"></i>Logout</a>
   </div>
 
-  <div id="owners" class="tab-content active">
-    <h2>Owner Details</h2>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Member Type</th>
-            <th>Tenant Name</th>
-            <th>Mobile No</th>
-            <th>Email ID</th>
-            <th>Username</th>
-            <th>Password</th>
-            <th>Society Name</th>
-            <th>Society Address</th>
-            <th>Wing/Building No</th>
-            <th>Flat No</th>
-            <th>Flat Owner Name</th>
-            <th>Edit</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="userData">
-          <!-- User data will be populated here -->
-        </tbody>
-      </table>
+  <div class="main-content">
+    <div class="flex justify-start mb-5">
+      <button onclick="showTab('owners')" class="bg-green-600 text-white py-2 px-4 rounded mr-2 active">Live Owner</button>
+      <button onclick="showTab('deleted')" class="bg-green-600 text-white py-2 px-4 rounded">Deleted Users</button>
     </div>
-  </div>
 
-  <div id="deleted" class="tab-content">
-    <h2>Deleted Owners</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>User Type</th>
-          <th>Full Name</th>
-          <th>Mobile No</th>
-          <th>Email ID</th>
-          <th>Username</th>
-          <th>Password</th>
-          <th>Society Name</th>
-          <th>Society Address</th>
-          <th>Wing/Building No</th>
-          <th>Flat No</th>
-          <th>Flat Owner Name</th>
-          <th>Restore</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody id="deletedUserData">
-        <!-- Deleted user data will be populated here -->
-      </tbody>
-    </table>
+    <div id="owners" class="tab-content active">
+      <h2 class="text-2xl text-gray-800 mb-4">Owner Details</h2>
+      <div class="overflow-x-auto overflow-y-auto max-h-96">
+        <table class="w-full border-collapse">
+          <thead class="bg-green-600 text-white">
+            <tr>
+              <th class="p-2 border">Member Type</th>
+              <th class="p-2 border">Tenant Name</th>
+              <th class="p-2 border">Mobile No</th>
+              <th class="p-2 border">Email ID</th>
+              <th class="p-2 border">Username</th>
+              <th class="p-2 border">Password</th>
+              <th class="p-2 border">Society Name</th>
+              <th class="p-2 border">Society Address</th>
+              <th class="p-2 border">Wing/Building No</th>
+              <th class="p-2 border">Flat No</th>
+              <th class="p-2 border">Flat Owner Name</th>
+              <th class="p-2 border">Edit</th>
+              <th class="p-2 border">Delete</th>
+            </tr>
+          </thead>
+          <tbody id="userData">
+            <!-- User data will be populated here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="deleted" class="tab-content hidden">
+      <h2 class="text-2xl text-gray-800 mb-4">Deleted Owners</h2>
+      <div class="overflow-x-auto overflow-y-auto max-h-96">
+        <table class="w-full border-collapse">
+          <thead class="bg-green-600 text-white">
+            <tr>
+              <th class="p-2 border">User Type</th>
+              <th class="p-2 border">Full Name</th>
+              <th class="p-2 border">Mobile No</th>
+              <th class="p-2 border">Email ID</th>
+              <th class="p-2 border">Username</th>
+              <th class="p-2 border">Password</th>
+              <th class="p-2 border">Society Name</th>
+              <th class="p-2 border">Society Address</th>
+              <th class="p-2 border">Wing/Building No</th>
+              <th class="p-2 border">Flat No</th>
+              <th class="p-2 border">Flat Owner Name</th>
+              <th class="p-2 border">Restore</th>
+              <th class="p-2 border">Delete</th>
+            </tr>
+          </thead>
+          <tbody id="deletedUserData">
+            <!-- Deleted user data will be populated here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -290,19 +149,19 @@
       users.forEach((user) => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td><input type="text" value="${user.userType}" disabled></td>
-          <td><input type="text" value="${user.fullName}" disabled></td>
-          <td><input type="text" value="${user.mobileNo}" disabled></td>
-          <td><input type="text" value="${user.email}" disabled></td>
-          <td><input type="text" value="${user.createUsername}" disabled></td>
-          <td><input type="text" value="${user.createPassword}" disabled></td>
-          <td><input type="text" value="${user.societyName}" disabled></td>
-          <td><input type="text" value="${user.societyAddress}" disabled></td>
-          <td><input type="text" value="${user.wingBuildingNo}" disabled></td>
-          <td><input type="text" value="${user.flatNo}" disabled></td>
-          <td><input type="text" value="${user.flatOwnerName}" disabled></td>
-          <td><button class="edit-button" onclick="editUser('${user._id}', this)">Edit</button></td>
-          <td><button class="delete-button" onclick="deleteUser('${user._id}')">Delete</button></td>
+          <td class="p-2 border"><input type="text" value="${user.userType}" disabled class="w-full"></td>
+          <td class="p-2 border"><input type="text" value="${user.fullName}" disabled class="w-full"></td>
+          <td class="p-2 border"><input type="text" value="${user.mobileNo}" disabled class="w-full"></td>
+          <td class="p-2 border"><input type="text" value="${user.email}" disabled class="w-full"></td>
+          <td class="p-2 border"><input type="text" value="${user.createUsername}" disabled class="w-full"></td>
+          <td class="p-2 border"><input type="text" value="${user.createPassword}" disabled class="w-full"></td>
+          <td class="p-2 border"><input type="text" value="${user.societyName}" disabled class="w-full"></td>
+          <td class="p-2 border"><input type="text" value="${user.societyAddress}" disabled class="w-full"></td>
+          <td class="p-2 border"><input type="text" value="${user.wingBuildingNo}" disabled class="w-full"></td>
+          <td class="p-2 border"><input type="text" value="${user.flatNo}" disabled class="w-full"></td>
+          <td class="p-2 border"><input type="text" value="${user.flatOwnerName}" disabled class="w-full"></td>
+          <td class="p-2 border"><button class="bg-blue-500 text-white py-1 px-2 rounded" onclick="editUser('${user._id}', this)">Edit</button></td>
+          <td class="p-2 border"><button class="bg-red-500 text-white py-1 px-2 rounded" onclick="deleteUser('${user._id}')">Delete</button></td>
         `;
         userDataTable.appendChild(row);
       });
@@ -315,19 +174,19 @@
       deletedUsers.forEach((user) => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${user.userType}</td>
-          <td>${user.fullName}</td>
-          <td>${user.mobileNo}</td>
-          <td>${user.email}</td>
-          <td>${user.createUsername}</td>
-          <td>${user.createPassword}</td>
-          <td>${user.societyName}</td>
-          <td>${user.societyAddress}</td>
-          <td>${user.wingBuildingNo}</td>
-          <td>${user.flatNo}</td>
-          <td>${user.flatOwnerName}</td>
-          <td><button class="restore-button" onclick="restoreUser('${user._id}')">Restore</button></td>
-          <td><button class="delete-button" onclick="permanentlyDeleteUser('${user._id}')">Delete Permanently</button></td>
+          <td class="p-2 border">${user.userType}</td>
+          <td class="p-2 border">${user.fullName}</td>
+          <td class="p-2 border">${user.mobileNo}</td>
+          <td class="p-2 border">${user.email}</td>
+          <td class="p-2 border">${user.createUsername}</td>
+          <td class="p-2 border">${user.createPassword}</td>
+          <td class="p-2 border">${user.societyName}</td>
+          <td class="p-2 border">${user.societyAddress}</td>
+          <td class="p-2 border">${user.wingBuildingNo}</td>
+          <td class="p-2 border">${user.flatNo}</td>
+          <td class="p-2 border">${user.flatOwnerName}</td>
+          <td class="p-2 border"><button class="bg-green-500 text-white py-1 px-2 rounded" onclick="restoreUser('${user._id}')">Restore</button></td>
+          <td class="p-2 border"><button class="bg-red-500 text-white py-1 px-2 rounded" onclick="permanentlyDeleteUser('${user._id}')">Delete Permanently</button></td>
         `;
         deletedUserDataTable.appendChild(row);
       });
@@ -427,8 +286,8 @@
     // Show tab functionality
     function showTab(tabId) {
       const tabs = document.querySelectorAll('.tab-content');
-      tabs.forEach(tab => tab.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
+      tabs.forEach(tab => tab.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
 
       const buttons = document.querySelectorAll('.tab-button');
       buttons.forEach(button => button.classList.remove('active'));
