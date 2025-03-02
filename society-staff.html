@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ...existing code... -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-6">
+    <!-- ...existing code... -->
+    <div class="mb-4">
+        <label for="societySelect" class="block text-gray-700 text-sm font-bold mb-2">Assign Society:</label>
+        <select id="societySelect" onchange="showSocietyMembers()" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <option value="">Select Society</option>
+            <!-- Add society options here -->
+        </select>
+    </div>
+    <div id="societyMembers" class="hidden">
+        <h3 class="text-xl font-semibold mb-4">Society Members</h3>
+        <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+            <thead class="bg-gray-80 text-white">
+                <tr>
+                    <th class="w-1/3 py-2">Name</th>
+                    <th class="w-1/3 py-2">Category</th>
+                    <th class="w-1/3 py-2">Action</th>
+                </tr>
+            </thead>
+            <tbody id="membersList">
+                <!-- Members will be populated here -->
+            </tbody>
+        </table>
+    </div>
+    <div id="staffInfo" class="hidden mt-4">
+        <h3 class="text-xl font-semibold mb-2">Staff Information</h3>
+        <p id="staffDetails" class="bg-white p-4 rounded-lg shadow-md"></p>
+    </div>
+    <script>
+        function showSocietyMembers() {
+            const societySelect = document.getElementById('societySelect');
+            const societyMembers = document.getElementById('societyMembers');
+            const membersList = document.getElementById('membersList');
+            const staffInfo = document.getElementById('staffInfo');
+            const staffDetails = document.getElementById('staffDetails');
+
+            if (societySelect.value) {
+                // Fetch and display members of the selected society
+                societyMembers.classList.remove('hidden');
+                membersList.innerHTML = ''; // Clear previous members
+                // Example data, replace with actual data fetching
+                const members = [
+                    { name: 'John Doe', category: 'SCT Staff' },
+                    { name: 'Jane Smith', category: 'Owners Staff' }
+                ];
+                members.forEach(member => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="border px-4 py-2">${member.name}</td>
+                        <td class="border px-4 py-2">${member.category}</td>
+                        <td class="border px-4 py-2"><button onclick="showStaffInfo('${member.name}', '${member.category}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">View Info</button></td>
+                    `;
+                    membersList.appendChild(row);
+                });
+            } else {
+                societyMembers.classList.add('hidden');
+                staffInfo.classList.add('hidden');
+            }
+        }
+
+        function showStaffInfo(name, category) {
+            const staffInfo = document.getElementById('staffInfo');
+            const staffDetails = document.getElementById('staffDetails');
+            staffInfo.classList.remove('hidden');
+            staffDetails.innerHTML = `Name: ${name}<br>Category: ${category}`;
+        }
+    </script>
+    <!-- ...existing code... -->
+</body>
+</html>
