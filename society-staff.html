@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dynamic Dropdown with API</title>
+        <!-- Tailwind CSS CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-100 font-sans">
+
+        <div class="max-w-4xl mx-auto p-8">
+
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Choose
+                an Option</h1>
+
+            <!-- Dropdown -->
+            <div class="mb-4">
+                <label for="dropdown"
+                    class="block text-lg font-medium text-gray-700">Select a
+                    Society</label>
+                <select id="dropdown" onchange="handleSocietySelect()"
+                    class="w-full mt-2 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value>Select an option</option>
+                </select>
+            </div>
+
+            <!-- Dynamic action buttons will appear here -->
+            <div id="actions" class="mb-4 hidden">
+                <button id="add-user-btn" onclick="addUser()"
+                    class="w-full mt-2 p-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white">
+                    Add user to existing society
+                </button>
+                <button id="upload-bulk-btn" onclick="uploadBulk()"
+                    class="w-full mt-2 p-2 border border-green-500 text-green-500 rounded-md hover:bg-green-500 hover:text-white">
+                    Upload bulk
+                </button>
+            </div>
+
+            <h2 class="text-2xl font-semibold text-gray-800 mt-6">API
+                Response:</h2>
+
+            <!-- Response -->
+            <div id="response"
+                class="mt-4 p-4 border border-gray-300 rounded-md shadow-sm bg-white">
+                <!-- Data will be shown here -->
+            </div>
+
+        </div>
+
+        <script>
+        // Constants
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+        const userExists = JSON.parse(localStorage.getItem('users'))?.find(user => user.createUsername === localStorage.getItem("logedIn"));
+        const url = `${API_BASE_URL}/api/societies?manager_id=${userExists?.managers || ''}`;
+
+        // Function to fetch dropdown options from an API
+        function loadDropdown() {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const dropdown = document.getElementById('dropdown');
+                    data.forEach(item => {
+                        dropdown.add(new Option(item.name, item._id));
+                    });
+                })
+                .catch(error => console.error('Error fetching dropdown options:', error));
+        }
+
+        // Handle society selection from the dropdown
+        function handleSocietySelect() {
+            const selectedValue = document.getElementById("dropdown").value;
+            const actionsDiv = document.getElementById("actions");
+            
+            // If a society is selected, show the action buttons
+            if (selectedValue) {
+                actionsDiv.classList.remove("hidden");
+            } else {
+                actionsDiv.classList.add("hidden");
+                document.getElementById("response").innerHTML = ""; // Clear response area
+            }
+
+            fetchData(selectedValue);
+        }
+
+        // Fetch society data based on selected value
+        function fetchData(societyId) {
+            if (!societyId) return;
+
+            fetch(`${API_BASE_URL}/api/societies?society_id=${societyId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Assuming `data` is the response object from your API
+                let htmlContent = '';
+
+                // Loop through the keys of the data object and create a dynamic list
+                for (let key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        // Handle any nested object (e.g., "four_wheelers" field)
+                        let value = data[key];
+                        if (typeof value === 'object' && value !== null) {
+                            // Check if it's a nested object and handle it accordingly
+                            if (value.hasOwnProperty('$numberDouble')) {
+                                value = value.$numberDouble || 'N/A';
+                            }
+                            // Add logic here for other nested objects if needed
+                        }
+                        
+                        // Add the key-value pair to the HTML content
+                        htmlContent += `
+                            <p class="text-gray-600"><strong>${capitalizeFirstLetter(key.replace(/_/g, ' '))}:</strong> ${value}</p>
+                        `;
+                    }
+                }
+
+                // Display the dynamically generated content
+                document.getElementById("response").innerHTML = htmlContent;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                document.getElementById("response").innerHTML = "<p class='text-red-500'>Error fetching data. Please try again.</p>";
+            });
+
+
+        }
+        function capitalizeFirstLetter(str) {
+            return str.replace(/\b\w/g, char => char.toUpperCase());
+        }
+
+        // Add user to existing society
+        function addUser() {
+            const societyId = document.getElementById("dropdown").value;
+            alert(`Adding user to society: ${societyId}`);
+
+            // You can replace this with your actual API call to add user logic
+        }
+
+        // Upload bulk data
+        function uploadBulk() {
+            const societyId = document.getElementById("dropdown").value;
+            alert(`Uploading bulk data to society: ${societyId}`);
+            // You can replace this with your actual bulk upload logic
+        }
+
+        // Load the dropdown options when the page loads
+        window.onload = loadDropdown;
+    </script>
+
+    </body>
+</html>

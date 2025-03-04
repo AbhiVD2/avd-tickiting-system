@@ -14,12 +14,20 @@
         }
         header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f8f8f8;
-            padding: 10px 20px;
-            border-bottom: 1px solid #ddd;
-        }
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f8f8f8;
+      padding: 10px 20px;
+      border-bottom: 1px solid #ddd;
+      width: 98%;
+      /* Make header full width */
+      position: fixed;
+      /* Fix header at the top */
+      top: 0;
+      /* Align header to the top */
+      z-index: 1000;
+      /* Ensure header is above other content */
+    }
         nav {
             display: flex;
             justify-content: right;
@@ -74,7 +82,7 @@
 </head>
 <body>
     <header>
-        <a href="h-index.html" class="logo"><img src="logo\logo.webp" alt="Logo" height="60"></a>
+        <a href="h-index.html" class="logo"><img src="logo\logo.webp" alt="Logo" height="50"></a>
         <nav>
             <!-- <a href="index.html">HOME</a> -->
             <a href="u-login.html">LOGIN</a>

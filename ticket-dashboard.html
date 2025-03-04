@@ -5,254 +5,119 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ticket Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .header {
-      background-color: #4CAF50;
-      padding: 10px;
-      text-align: center;
-      color: white;
-      position: relative;
-    }
-
-    .header a {
-      color: white;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .header a:hover {
-      text-decoration: underline;
-    }
-
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .card {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
-
-    .card h3 {
-      margin: 0;
-      font-size: 24px;
-      color: #4CAF50;
-    }
-
-    .card p {
-      font-size: 48px;
-      margin: 10px 0;
-      color: #333;
-    }
-
-    .card small {
-      display: block;
-      margin-top: 10px;
-      font-size: 14px;
-      color: #777;
-    }
-
-    .table-small {
-      overflow-x: auto;
-      overflow-y: auto;
-      max-height: 400px;
-      margin-top: 20px;
-      position: relative;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      box-sizing: border-box;
-    }
-
-    table,
-    th,
-    td {
-      border: 1px solid #ccc;
-    }
-
-    th,
-    td {
-      padding: 10px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #4CAF50;
-      color: white;
-      position: sticky;
+    .sidebar {
+      width: 250px;
+      height: 100%;
+      position: fixed;
       top: 0;
-      z-index: 1;
+      left: 0;
+      background-color: #333;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
     }
 
-    .new-ticket {
-      background-color: #e7f4e4;
-    }
-
-    .approval-buttons {
+    .sidebar a {
+      padding: 10px 15px;
+      text-decoration: none;
+      font-size: 18px;
+      color: white;
       display: flex;
-      justify-content: space-around;
+      align-items: center;
+      gap: 10px;
+      transition: 0.3s;
     }
 
-    .approval-buttons button {
-      padding: 5px 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
+    .sidebar a:hover {
+      background-color: #575757;
     }
 
-    .approve-button {
-      background-color: #4CAF50;
-      color: white;
-    }
-
-    .approve-button:hover {
-      background-color: #45a049;
-    }
-
-    .reject-button {
-      background-color: #f44336;
-      color: white;
-    }
-
-    .reject-button:hover {
-      background-color: #d32f2f;
-    }
-
-    @media (max-width: 768px) {
-      .header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .header a {
-        margin: 5px 0;
-      }
-
-      .dashboard {
-        grid-template-columns: 1fr;
-      }
-
-      table,
-      th,
-      td {
-        font-size: 14px;
-      }
-
-      .table-small {
-        max-height: 300px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .card h3 {
-        font-size: 18px;
-      }
-
-      .card p {
-        font-size: 36px;
-      }
-
-      th,
-      td {
-        font-size: 12px;
-        padding: 6px;
-      }
-
-      .table-small {
-        max-height: 200px;
-      }
+    .main-content {
+      margin-left: 250px;
+      transition: margin-left 0.5s;
+      padding: 20px;
     }
   </style>
 </head>
 
-<body>
-  <div class="header">
-    <a href="admin-dashboard.html">Dashboard</a>
-    <a href="user-data.html">Users Data</a>
-    <a href="manager.html">Manager</a>
-    <a href="society.html">Society</a>
-    <a href="services.html">Services</a>
-    <a href="admin-login.html" id="logoutButton" onclick="logout()">Logout</a>
-  </div>
-  <div class="dashboard">
-    <div class="card">
-      <h3>Total Tickets</h3>
-      <p id="totalTickets">0</p>
-      <small>Total number of tickets submitted</small>
-    </div>
-    <div class="card">
-      <h3>Open Tickets</h3>
-      <p id="openTickets">0</p>
-      <small>Tickets that are currently open</small>
-    </div>
-    <div class="card">
-      <h3>Closed Tickets</h3>
-      <p id="closedTickets">0</p>
-      <small>Tickets that have been closed</small>
-    </div>
-    <div class="card">
-      <h3>Average Response Time</h3>
-      <p id="avgResponseTime">0h</p>
-      <small>Average time to respond to tickets</small>
-    </div>
-    <div class="card">
-      <h3>Unassigned Tickets</h3>
-      <p id="unassignedTickets">0</p>
-      <small>Tickets that are currently unassigned</small>
-    </div>
-    <div class="card">
-      <h3>Assigned Tickets</h3>
-      <p id="assignedTickets">0</p>
-      <small>Tickets that are currently assigned</small>
-    </div>
+<body class="bg-gray-100 font-sans">
+  <div class="sidebar">
+    <a href="a-admin-dashboard.html"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+    <a href="m-user-data.html"><i class="fas fa-users"></i>Users Data</a>
+    <a href="manager.html"><i class="fas fa-user-tie"></i>Managers</a>
+    <a href="ticket-dashboard.html"><i class="fas fa-ticket-alt"></i>Ticket Dashboard</a>
+    <a href="society.html"><i class="fas fa-building"></i>Society</a>
+    <a href="services.html"><i class="fas fa-briefcase"></i>Services</a>
+    <a href="a-admin-login.html" onclick="logout()" id="logoutBtn" class="hidden"><i class="fas fa-sign-out-alt"></i>Logout</a>
   </div>
 
-  <div class="table-small">
-    <table>
-      <thead>
-        <tr>
-          <th>Ticket Id</th>
-          <th>Ticket No</th>
-          <th>Start date</th>
-          <th>Name of Owner / applicant</th>
-          <th>Email Id</th>
-          <th>Subject</th>
-          <th>Location</th>
-          <th>Description</th>
-          <th>Society</th>
-          <th>Wing and Flat No.</th>
-          <th>Status</th>
-          <th>Priority</th>
-          <th>Last Updated</th>
-          <th>Approval Status From S/C/T</th>
-          <th>Name of S/C/T</th>
-          <th>Admin Approval</th>
-          <th>Admin Approval</th>
-          <th>Assign</th>
-          <th>Edit</th>
-        </tr>
-      </thead>
-      <tbody id="ticketTableBody">
-        <!-- Ticket data will be populated here -->
-      </tbody>
-    </table>
+  <div class="main-content">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
+      <div class="bg-white p-5 rounded-lg shadow text-center">
+        <h3 class="text-2xl text-green-600">Total Tickets</h3>
+        <p id="totalTickets" class="text-4xl text-gray-800 my-2">0</p>
+        <small class="text-gray-600">Total number of tickets submitted</small>
+      </div>
+      <div class="bg-white p-5 rounded-lg shadow text-center">
+        <h3 class="text-2xl text-green-600">Open Tickets</h3>
+        <p id="openTickets" class="text-4xl text-gray-800 my-2">0</p>
+        <small class="text-gray-600">Tickets that are currently open</small>
+      </div>
+      <div class="bg-white p-5 rounded-lg shadow text-center">
+        <h3 class="text-2xl text-green-600">Closed Tickets</h3>
+        <p id="closedTickets" class="text-4xl text-gray-800 my-2">0</p>
+        <small class="text-gray-600">Tickets that have been closed</small>
+      </div>
+      <div class="bg-white p-5 rounded-lg shadow text-center">
+        <h3 class="text-2xl text-green-600">Average Response Time</h3>
+        <p id="avgResponseTime" class="text-4xl text-gray-800 my-2">0h</p>
+        <small class="text-gray-600">Average time to respond to tickets</small>
+      </div>
+      <div class="bg-white p-5 rounded-lg shadow text-center">
+        <h3 class="text-2xl text-green-600">Unassigned Tickets</h3>
+        <p id="unassignedTickets" class="text-4xl text-gray-800 my-2">0</p>
+        <small class="text-gray-600">Tickets that are currently unassigned</small>
+      </div>
+      <div class="bg-white p-5 rounded-lg shadow text-center">
+        <h3 class="text-2xl text-green-600">Assigned Tickets</h3>
+        <p id="assignedTickets" class="text-4xl text-gray-800 my-2">0</p>
+        <small class="text-gray-600">Tickets that are currently assigned</small>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto overflow-y-auto max-h-96 mt-5 relative">
+      <table class="w-full border-collapse">
+        <thead class="bg-green-600 text-white sticky top-0 z-10">
+          <tr>
+            <th class="p-2 border">Ticket Id</th>
+            <th class="p-2 border">Ticket No</th>
+            <th class="p-2 border">Start date</th>
+            <th class="p-2 border">Name of Owner / applicant</th>
+            <th class="p-2 border">Email Id</th>
+            <th class="p-2 border">Subject</th>
+            <th class="p-2 border">Location</th>
+            <th class="p-2 border">Description</th>
+            <th class="p-2 border">Society</th>
+            <th class="p-2 border">Wing and Flat No.</th>
+            <th class="p-2 border">Status</th>
+            <th class="p-2 border">Priority</th>
+            <th class="p-2 border">Last Updated</th>
+            <th class="p-2 border">Approval Status From S/C/T</th>
+            <th class="p-2 border">Name of S/C/T</th>
+            <th class="p-2 border">Admin Approval</th>
+            <th class="p-2 border">Admin Approval</th>
+            <th class="p-2 border">Assign</th>
+            <th class="p-2 border">Edit</th>
+          </tr>
+        </thead>
+        <tbody id="ticketTableBody">
+          <!-- Ticket data will be populated here -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script>
@@ -277,41 +142,41 @@
 
       tickets.forEach((ticket, index) => {
         const row = document.createElement('tr');
-        row.className = ticket.status === 'Open' ? 'new-ticket' : '';
+        row.className = ticket.status === 'Open' ? 'bg-green-100' : '';
         row.innerHTML = `
-          <td>${index + 1}</td>
-          <td>${ticket.tickitId}</td>
-          <td>${ticket.createdAt}</td>
-          <td>${ticket.fullName}</td>
-          <td>${ticket.email}</td>
-          <td>${ticket.subject}</td>
-          <td>${ticket.issueLocation}</td>
-          <td>${ticket.description}</td>
-          <td>${ticket.society}</td>
-          <td>${ticket.wingBuildingNo}</td>
-          <td>
-            <select onchange="updateStatus('${ticket._id}', this.value)">
+          <td class="p-2 border">${index + 1}</td>
+          <td class="p-2 border">${ticket.tickitId}</td>
+          <td class="p-2 border">${ticket.createdAt}</td>
+          <td class="p-2 border">${ticket.fullName}</td>
+          <td class="p-2 border">${ticket.email}</td>
+          <td class="p-2 border">${ticket.subject}</td>
+          <td class="p-2 border">${ticket.issueLocation}</td>
+          <td class="p-2 border">${ticket.description}</td>
+          <td class="p-2 border">${ticket.society}</td>
+          <td class="p-2 border">${ticket.wingBuildingNo}</td>
+          <td class="p-2 border">
+            <select onchange="updateStatus('${ticket._id}', this.value)" class="p-1 border rounded">
               <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>Open</option>
               <option value="Closed" ${ticket.status === 'Closed' ? 'selected' : ''}>Closed</option>
               <option value="Pending" ${ticket.status === 'Pending' ? 'selected' : ''}>Pending</option>
             </select>
           </td>
-          <td contenteditable="true">${ticket.priority || 'Normal'}</td>
-          <td>${ticket.lastUpdated || 'N/A'}</td>
-          <td contenteditable="true">${ticket.instructionType || 'N/A'}</td>
-          <td contenteditable="true">${ticket.additionalRequirement || 'N/A'}</td>
-          <td contenteditable="true">${ticket.ticketStatus || 'Received'}</td>
-          <td contenteditable="true">${ticket.approvalFrom || 'N/A'}</td>
-          <td>
-            <select onchange="assignManager('${ticket._id}', this.value)">
+          <td class="p-2 border" contenteditable="true">${ticket.priority || 'Normal'}</td>
+          <td class="p-2 border">${ticket.lastUpdated || 'N/A'}</td>
+          <td class="p-2 border" contenteditable="true">${ticket.instructionType || 'N/A'}</td>
+          <td class="p-2 border" contenteditable="true">${ticket.additionalRequirement || 'N/A'}</td>
+          <td class="p-2 border" contenteditable="true">${ticket.ticketStatus || 'Received'}</td>
+          <td class="p-2 border" contenteditable="true">${ticket.approvalFrom || 'N/A'}</td>
+          <td class="p-2 border">
+            <select onchange="assignManager('${ticket._id}', this.value,'${manager._id}')" class="p-1 border rounded">
               <option value="">Unassigned</option>
               ${managers.map(manager => `<option value="${manager.createUsername}" ${ticket.manager === manager.createUsername ? 'selected' : ''}>${manager.createUsername}</option>`).join('')}
             </select>
           </td>
-          <td>
-            <button onclick="editTicket(${index})">Edit</button>
-            <button onclick="updateTicket('${ticket._id}', ${index})">Update</button>
-            <button onclick="deleteTicket('${ticket._id}')">Delete</button>
+          <td class="p-2 border">
+            <button onclick="editTicket(${index})" class="p-1 bg-blue-500 text-white rounded">Edit</button>
+            <button onclick="updateTicket('${ticket._id}', ${index})" class="p-1 bg-green-500 text-white rounded">Update</button>
+            <button onclick="deleteTicket('${ticket._id}')" class="p-1 bg-red-500 text-white rounded">Delete</button>
           </td>
         `;
         ticketTableBody.appendChild(row);
@@ -341,7 +206,7 @@
 
     async function deleteTicket(ticketId) {
       if (confirm('Are you sure you want to delete this ticket?')) {
-        await fetch(`http://127.0.0.1:5000/api//tickets/${ticketId}`, {
+        await fetch(`http://127.0.0.1:5000/api/tickets/${ticketId}`, {
           method: 'DELETE'
         });
 
@@ -373,13 +238,13 @@
       return `${avgResponseTime.toFixed(2)}h`;
     }
 
-    async function assignManager(ticketId, managerUsername) {
+    async function assignManager(ticketId, managerUsername ,managerId) {
       await fetch(`http://127.0.0.1:5000/api/tickets/${ticketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ manager: managerUsername })
+        body: JSON.stringify({ manager: managerUsername , assigned_to:managerId})
       });
 
       location.reload();

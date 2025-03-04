@@ -114,7 +114,7 @@
       transition: margin-left 0.3s, width 0.3s;
     }
 
-    .sidebar:hover ~ .content {
+    .sidebar:hover~.content {
       margin-left: 220px;
       width: calc(100% - 220px);
     }
@@ -134,7 +134,7 @@
       transition: left 0.3s, width 0.3s;
     }
 
-    .sidebar:hover ~ .content .header {
+    .sidebar:hover~.content .header {
       left: 200px;
       width: calc(100% - 200px);
     }
@@ -207,7 +207,16 @@
   <div class="main">
     <div class="container-sidebar-form">
       <div class="sidebar">
-        <a href="javascript:void(0);" onclick="loadContent('dashboard.html')">
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            loadContent('memberdashboard.html'); // Load memberdashboard.html on page refresh
+          });
+
+          function onLogin() {
+            loadContent('memberdashboard.html'); // Load memberdashboard.html after login
+          }
+        </script>
+        <a href="javascript:void(0);" onclick="loadContent('memberdashboard.html')">
           <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
         </a>
         <a href="javascript:void(0);" onclick="loadContent('events.html')">
