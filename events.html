@@ -1,241 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Management</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 20px 0;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 200px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #eventsList {
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        .event-item {
+            background-color: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button.delete-btn {
+            background-color: #f44336;
+            margin-left: 10px;
+        }
+
+        button.update-btn {
+            background-color: #2196F3;
+        }
+
+        button.delete-btn:hover, button.update-btn:hover {
+            opacity: 0.8;
+        }
+    </style>
 </head>
+<body>
+    <h1>Event Management</h1>
 
-<body class="bg-gray-100">
-    <div class="flex">
-        <!-- Sidebar -->
-        <div class="sidebar bg-blue-900 text-white w-60 h-screen fixed top-0 left-0 p-4">
-            <div class="profile flex items-center mb-6">
-                <img src="profile-photo.jpg" alt="Profile Photo" class="w-10 h-10 rounded-full mr-3">
-                <span id="username" class="font-bold">User</span>
-            </div>
-            <a href="javascript:void(0);" onclick="loadContent('memberdashboard.html')" class="block py-2 px-4 rounded hover:bg-blue-700">
-                <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
-            </a>
-            <a href="javascript:void(0);" onclick="loadContent('events.html')" class="block py-2 px-4 rounded hover:bg-blue-700">
-                <i class="fas fa-calendar-alt mr-2"></i>Event
-            </a>
-            <a href="javascript:void(0);" onclick="loadContent('ticket-submission.html')" class="block py-2 px-4 rounded hover:bg-blue-700">
-                <i class="fas fa-ticket-alt mr-2"></i>Complaint
-            </a>
-            <a href="javascript:void(0);" onclick="loadContent('m-emergency-contacts.html')" class="block py-2 px-4 rounded hover:bg-blue-700">
-                <i class="fas fa-phone-alt mr-2"></i>Emergency Contacts
-            </a>
-            <a href="javascript:void(0);" onclick="loadContent('personal-details.html')" class="block py-2 px-4 rounded hover:bg-blue-700">
-                <i class="fas fa-user mr-2"></i>Profile
-            </a>
-            <a href="javascript:void(0);" onclick="logout()" class="block py-2 px-4 rounded hover:bg-blue-700">
-                <i class="fas fa-sign-out-alt mr-2"></i>Logout
-            </a>
-        </div>
-
-        <!-- Main Content -->
-        <div class="flex-1 ml-64 p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-bold text-gray-900">Events</h1>
-                <button id="addEventBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600">
-                    Add New Event
-                </button>
-            </div>
-
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event Title</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="eventsTableBody" class="bg-white divide-y divide-gray-200"></tbody>
-                </table>
-            </div>
-        </div>
+    <!-- Form for creating or updating events -->
+    <div class="form-container">
+        <h2>Add / Update Event</h2>
+        <form id="eventForm">
+            <input type="hidden" id="eventId">
+            <input type="text" id="title" placeholder="Event Title" required>
+            <input type="date" id="date" placeholder="Event Date" required>
+            <input type="time" id="time" placeholder="Event Time" required>
+            <input type="text" id="location" placeholder="Event Location">
+            <button type="submit">Add Event</button>
+        </form>
     </div>
 
-    <!-- Modal for Adding an Event -->
-    <div id="addEventModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 hidden flex justify-center items-center">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 class="text-2xl font-bold mb-4">Add Event</h2>
-            <form id="addEventForm">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Event Title</label>
-                    <input type="text" id="eventTitle" class="mt-1 p-2 w-full border rounded-md" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Date</label>
-                    <input type="date" id="eventDate" class="mt-1 p-2 w-full border rounded-md" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Time</label>
-                    <input type="time" id="eventTime" class="mt-1 p-2 w-full border rounded-md" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Location</label>
-                    <input type="text" id="eventLocation" class="mt-1 p-2 w-full border rounded-md" required>
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button type="button" id="cancelBtn" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">
-                        Cancel
-                    </button>
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Add Event</button>
-                </div>
-            </form>
-        </div>
+    <!-- Event list -->
+    <h2>Events</h2>
+    <div id="eventsList">
+        <!-- Event items will be dynamically populated here -->
     </div>
 
     <script>
-        const apiUrl = 'http://127.0.0.1:5000/api/events';  // API URL for Events
-        const modal = document.getElementById('addEventModal');
-        const addEventForm = document.getElementById('addEventForm');
-        let editingEventId = null;  // Variable to track if editing an event
+        const apiUrl = 'http://127.0.0.1:5000/api/events';
+        const eventsList = document.getElementById('eventsList');
+        const eventForm = document.getElementById('eventForm');
+        const eventIdInput = document.getElementById('eventId');
+        const titleInput = document.getElementById('title');
+        const dateInput = document.getElementById('date');
+        const timeInput = document.getElementById('time');
+        const locationInput = document.getElementById('location');
 
-        // Open Modal for Adding a New Event
-        document.getElementById('addEventBtn').addEventListener('click', () => {
-            modal.classList.remove('hidden');
-            editingEventId = null;  // Reset editing
-            addEventForm.reset();
-        });
+        // Fetch events and display
+        async function fetchEvents() {
+            const response = await fetch(apiUrl);
+            const events = await response.json();
 
-        // Close Modal on Cancel Button
-        document.getElementById('cancelBtn').addEventListener('click', () => modal.classList.add('hidden'));
-
-        // Close Modal on Escape Key
-        document.addEventListener('keydown', (event) => {
-            if (event.key === "Escape") modal.classList.add('hidden');
-        });
-
-        // Load Events on Page Load
-        document.addEventListener('DOMContentLoaded', loadEvents);
-
-        function loadEvents() {
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById('eventsTableBody');
-                    tableBody.innerHTML = '';
-                    data.forEach((event, index) => {
-                        addEventToTable(index + 1, event);
-                    });
-                })
-                .catch(error => console.error('Error loading events:', error));
+            eventsList.innerHTML = ''; // Clear existing events
+            events.forEach(event => {
+                const eventDiv = document.createElement('div');
+                eventDiv.classList.add('event-item');
+                eventDiv.innerHTML = `
+                    <h3>${event.title}</h3>
+                    <p>Date: ${event.date}</p>
+                    <p>Time: ${event.time}</p>
+                    <p>Location: ${event.location || 'N/A'}</p>
+                    <button class="update-btn" onclick="editEvent('${event._id}')">Edit</button>
+                    <button class="delete-btn" onclick="deleteEvent('${event._id}')">Delete</button>
+                `;
+                eventsList.appendChild(eventDiv);
+            });
         }
 
-        // Add Event to Table (UI)
-        function addEventToTable(index, event) {
-            const tableBody = document.getElementById('eventsTableBody');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="px-6 py-4">${index}</td>
-                <td class="px-6 py-4">${event.title}</td>
-                <td class="px-6 py-4">${event.date}</td>
-                <td class="px-6 py-4">${event.time}</td>
-                <td class="px-6 py-4">${event.location}</td>
-                <td class="px-6 py-4">
-                    <button class="bg-yellow-500 text-white px-2 py-1 rounded-lg" onclick="editEvent(${event._id}, this)">Edit</button>
-                    <button class="bg-red-500 text-white px-2 py-1 rounded-lg" onclick="deleteEvent(${event._id})">Delete</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
+        // Add new event
+        async function addEvent(eventData) {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(eventData),
+            });
+            const result = await response.json();
+            alert(result.message);
+            fetchEvents();
         }
 
-        // Edit Event
-        function editEvent(eventId, button) {
-            fetch(`${apiUrl}/${eventId}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('eventTitle').value = data.title;
-                    document.getElementById('eventDate').value = data.date.split('T')[0];
-                    document.getElementById('eventTime').value = data.time.split('T')[1].slice(0, 5);
-                    document.getElementById('eventLocation').value = data.location;
-                    modal.classList.remove('hidden');
-                    editingEventId = eventId;
-                })
-                .catch(error => console.error('Error fetching event for editing:', error));
+        // Update existing event
+        async function updateEvent(eventData, eventId) {
+            const response = await fetch(`${apiUrl}/${eventId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(eventData),
+            });
+            const result = await response.json();
+            alert(result.message);
+            fetchEvents();
         }
 
-        // Add or Update Event
-        addEventForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const newEvent = {
-                title: document.getElementById('eventTitle').value,
-                date: document.getElementById('eventDate').value,
-                time: document.getElementById('eventTime').value,
-                location: document.getElementById('eventLocation').value
+        // Delete event
+        async function deleteEvent(eventId) {
+            const response = await fetch(`${apiUrl}/${eventId}`, {
+                method: 'DELETE',
+            });
+            const result = await response.json();
+            alert(result.message);
+            fetchEvents();
+        }
+
+        // Edit event - populate form
+        function editEvent(eventId) {
+            const eventDiv = Array.from(eventsList.children).find(e => 
+                e.querySelector('button.update-btn').getAttribute('onclick') === `editEvent('${eventId}')`
+            );
+            const title = eventDiv.querySelector('h3').innerText;
+            const date = eventDiv.querySelector('p:nth-of-type(1)').innerText.replace('Date: ', '');
+            const time = eventDiv.querySelector('p:nth-of-type(2)').innerText.replace('Time: ', '');
+            const location = eventDiv.querySelector('p:nth-of-type(3)').innerText.replace('Location: ', '') || '';
+
+            eventIdInput.value = eventId;
+            titleInput.value = title;
+            dateInput.value = date;
+            timeInput.value = time;
+            locationInput.value = location;
+        }
+
+        // Handle form submit
+        eventForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const eventData = {
+                title: titleInput.value,
+                date: dateInput.value,
+                time: timeInput.value,
+                location: locationInput.value,
             };
 
-            if (editingEventId) {
-                // Update event
-                fetch(`${apiUrl}/${editingEventId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newEvent)
-                })
-                .then(response => response.json())
-                .then(() => {
-                    loadEvents();
-                    modal.classList.add('hidden');
-                    addEventForm.reset();
-                })
-                .catch(error => console.error('Error updating event:', error));
+            if (eventIdInput.value) {
+                // Update the existing event
+                updateEvent(eventData, eventIdInput.value);
             } else {
-                // Create new event
-                fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newEvent)
-                })
-                .then(response => response.json())
-                .then(() => {
-                    loadEvents();
-                    modal.classList.add('hidden');
-                    addEventForm.reset();
-                })
-                .catch(error => console.error('Error adding event:', error));
+                // Add a new event
+                addEvent(eventData);
             }
+
+            // Reset form after submission
+            eventForm.reset();
+            eventIdInput.value = '';
         });
 
-        // Delete Event
-        function deleteEvent(eventId) {
-            fetch(`${apiUrl}/${eventId}`, { method: 'DELETE' })
-                .then(() => loadEvents())
-                .catch(error => console.error('Error deleting event:', error));
-        }
-
-        // Load content function for sidebar links
-        function loadContent(url) {
-            window.location.href = url;
-        }
-
-        // Logout function
-        function logout() {
-            localStorage.removeItem('logedIn');
-            localStorage.removeItem("users");
-            window.location.href = 'u-login.html';
-        }
-
-        // Set username in sidebar
-        const loggedInUser = localStorage.getItem("logedIn");
-        const allUsers = JSON.parse(localStorage.getItem('users')) || [];
-        const userExists = allUsers.find(user => user.createUsername === loggedInUser);
-
-        if (userExists) {
-            document.getElementById('username').textContent = userExists.fullName;
-        } else {
-            alert('No user is logged in.');
-            window.location.href = 'u-login.html';
-        }
+        // Initial fetch of events
+        fetchEvents();
     </script>
 </body>
-
 </html>

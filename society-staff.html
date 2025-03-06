@@ -71,7 +71,7 @@
         function handleSocietySelect() {
             const selectedValue = document.getElementById("dropdown").value;
             const actionsDiv = document.getElementById("actions");
-            
+
             // If a society is selected, show the action buttons
             if (selectedValue) {
                 actionsDiv.classList.remove("hidden");
@@ -105,7 +105,7 @@
                             }
                             // Add logic here for other nested objects if needed
                         }
-                        
+
                         // Add the key-value pair to the HTML content
                         htmlContent += `
                             <p class="text-gray-600"><strong>${capitalizeFirstLetter(key.replace(/_/g, ' '))}:</strong> ${value}</p>
