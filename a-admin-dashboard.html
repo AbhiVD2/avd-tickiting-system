@@ -5,97 +5,60 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #425977e1;
-      margin: 0;
+    .sidebar {
+      width: 250px;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #333;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
     }
 
-    .header {
-      background-color: #f8f8f8;
-      padding: 25px;
-      text-align: center;
-      color: white;
-      position: relative;
-    }
-
-    .header a.logo {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-    }
-
-    .header a {
-      color: rgb(7, 7, 7);
-      margin: 0 15px;
+    .sidebar a {
+      padding: 10px 15px;
       text-decoration: none;
-      font-weight: bold;
-    }
-
-    .header a:hover {
-      text-decoration: underline;
-    }
-
-    .content {
-      padding: 20px;
-      max-width: 300px;
-    }
-
-    .charts {
+      font-size: 18px;
+      color: white;
       display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .chart-container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      justify-content: space-between;
-    }
-
-    .header-2 {
-      display: flex;
-      justify-content: flex-end;
-      /* Aligns all links to the right */
       align-items: center;
-      /* Vertically center the links */
+      gap: 10px;
+      transition: 0.3s;
     }
 
-    .header-2 a {
-      margin-left: 15px;
-      /* Space between links */
+    .sidebar a:hover {
+      background-color: #575757;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      transition: margin-left 0.5s;
+      height: 100vh;
+      overflow: hidden;
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 </head>
 
-<body>
-  <div class="header">
-    <a href="a-admin-dashboard.html" class="logo"><img src="logo\logo.webp" alt="Logo" height="30"></a>
-    <div class="header-2">
-      <a href="m-user-data.html">Users Data</a>
-      <a href="ticket-dashboard.html">Ticket Dashboard</a>
-      <a href="society.html">Society</a>
-      <a href="services.html">Services</a>
-      <a href="a-admin-login.html" onclick="logout()" id="logoutBtn" style="display: none;">Logout</a>
-    </div>
+<body class="bg-white-900 text-white font-sans">
+  <div class="sidebar">
+    <a href="a-admin-dashboard.html"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+    <a href="society.html"><i class="fas fa-building"></i>Society</a>
+    <a href="manager.html"><i class="fas fa-user-tie"></i>Managers</a>
+    <a href="m-user-data.html"><i class="fas fa-users"></i>Society Staff</a>
+    <a href="ticket-dashboard.html"><i class="fas fa-ticket-alt"></i>Ticket Dashboard</a>
+    <a href="administration.html"><i class="fas fa-cogs"></i>Administration</a>
+    <a href="finance.html"><i class="fas fa-money-check-alt"></i>Finance</a>
+    <a href="services.html"><i class="fas fa-briefcase"></i>Services</a>
+    <a href="a-admin-login.html" onclick="logout()" id="logoutBtn" class="hidden"><i class="fas fa-sign-out-alt"></i>Logout</a>
   </div>
-  <p id="adminUsername" style="text-align: center; margin-top: 10px;"></p>
-  <div class="content">
-    <h2 id="welcomeMessage"></h2>
-    <p id="adminDetails"></p>
-    <div class="charts">
-      <div class="chart-container">
-        <canvas id="accountsChart"></canvas>
-      </div>
-      <div class="chart-container">
-        <canvas id="ticketsChart"></canvas>
-      </div>
-    </div>
+  <div class="main-content">
+    <iframe src="dashboard.html" class="w-full h-full border-0"></iframe>
+    <div id="welcomeMessage" class="text-center text-2xl mt-4"></div>
   </div>
 
   <script>
@@ -106,70 +69,14 @@
 
     const admin = localStorage.getItem('loggedId');
 
-    // Function to create charts
-    function createChart(ctx, data, options) {
-      return new Chart(ctx, {
-        type: 'pie',
-        data,
-        options,
-        plugins: [ChartDataLabels]
-      });
-    }
-
-    // Fetch data from APIs
-    async function fetchData() {
+    // Fetch user data from API
+    async function fetchUserData() {
       try {
-        const [users, tickets, managers] = await Promise.all([
-          fetch('http://127.0.0.1:5000/api/users').then(res => res.json()),
-          fetch('http://127.0.0.1:5000/api/tickets').then(res => res.json()),
-          fetch('http://127.0.0.1:5000/api/managers').then(res => res.json())
-        ]);
-
-        const managerCount = managers.length || 0;
-        const totalOwners = users.filter(user => user.userType === 'Owner').length;
-        const totalSCT = users.filter(user => user.userType === 'SCT').length;
-        const unassignedTickets = tickets.filter(ticket => !ticket.manager).length;
-        const inProcessTickets = tickets.filter(ticket => ticket.manager && !ticket.completed).length;
-        const completedTickets = tickets.filter(ticket => ticket.completed).length;
-        const pendingTickets = tickets.length - (unassignedTickets + inProcessTickets + completedTickets);
-
-        // Update UI with fetched data
-        document.getElementById('adminDetails').textContent = `Managers Staff's :  ${managerCount}`;
-        document.getElementById('welcomeMessage').textContent = `Welcome, ${admin}`;
-
-        // Create charts
-        createChart(document.getElementById('accountsChart').getContext('2d'), {
-          labels: ['Owners', 'SCT'],
-          datasets: [{
-            data: [totalOwners, totalSCT],
-            backgroundColor: ['#4CAF50', '#FFC107']
-          }]
-        }, {
-          responsive: true,
-          plugins: {
-            legend: { position: 'top', labels: { color: 'black' } },
-            title: { display: true, text: 'Accounts Count', color: 'black' },
-            datalabels: { color: 'black' }
-          } 
-        });
-
-        createChart(document.getElementById('ticketsChart').getContext('2d'), {
-          labels: ['Completed', 'In Process', 'Unassigned', 'Pending'],
-          datasets: [{
-            data: [completedTickets, inProcessTickets, unassignedTickets, pendingTickets],
-            backgroundColor: ['#4CAF50', '#FFC107', '#FF5722', '#9E9E9E']
-          }]
-        }, {
-          responsive: true,
-          plugins: {
-            legend: { position: 'top', labels: { color: 'black' } },
-            title: { display: true, text: 'Ticket Counts', color: 'black' },
-            datalabels: { color: 'black' }
-          }
-        });
-
+        const response = await fetch(`http://127.0.0.1:5000/api/users/${admin}`);
+        const user = await response.json();
+        document.getElementById('welcomeMessage').textContent = `Welcome back, ${user.name}`;
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching user data:', error);
       }
     }
 
@@ -178,8 +85,8 @@
       window.location.href = 'a-admin-login.html'; // Redirect to login if not logged in
     } else {
       // Show logout button if loggedId exists
-      document.getElementById('logoutBtn').style.display = 'block';
-      fetchData(); // Call the function to fetch data
+      document.getElementById('logoutBtn').classList.remove('hidden');
+      fetchUserData(); // Fetch and display user data
     }
   </script>
 </body>

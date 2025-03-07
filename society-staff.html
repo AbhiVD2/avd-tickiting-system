@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Submission</title>
+
+    <!-- Add Bootstrap CSS from CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            /* background-color: #f8f9fa; */
+        }
+
+        .container {
+            margin-top: -27px;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        .form-control,
+        .form-select,
+        .form-textarea {
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .btn-submit:hover {
+            background-color: #45a049;
+        }
+
+        .dialog-box {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        .quote {
+            font-size: 1.5rem;
+            font-style: italic;
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #4CAF50;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Make table scrollable */
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="mb-3">
+            <select class="form-select" id="society" name="society" required>
+                <option value disabled selected>Select Society</option>
+            </select>
+        </div>
+
+        <!-- Dialog Box -->
+        <div class="dialog-box" id="dialogBox">
+            <p id="dialogMessage"></p>
+        </div>
+
+        <div id="actions" class="mb-4 hidden">
+            <button id="add-user-btn" class="btn btn-primary">Add Data</button>
+            <button id="upload-excel-btn" class="btn btn-secondary">Upload Excel</button>
+            <button id="download-sample-btn" class="btn btn-secondary">Download Sample Excel</button>
+        </div>
+
+        <div class="table-container">
+            <div id="response" class="mt-4"></div>
+        </div>
+
+    </div>
+
+    <!-- Add Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+        const luser = localStorage.getItem("logedIn");
+        const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+        const userExists = allUsers.find(user => user.createUsername === luser);
+
+        async function fetchSocieties() {
+            try {
+                const params = new URLSearchParams();
+                params.append('manager_id', userExists.managers);
+                const queryString = params.toString();
+
+                const response = await fetch(`${API_BASE_URL}/api/societies?${queryString}`);
+                const societies = await response.json();
+                const societySelect = document.getElementById('society');
+
+                societies.forEach(society => {
+                    const option = document.createElement('option');
+                    option.value = society._id;
+                    option.textContent = `${society.name} - ${society.address} - ${society.incharge}`;
+                    societySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching societies:', error);
+            }
+        }
+
+        function handleSocietySelect() {
+            const selectedValue = document.getElementById("society").value;
+            const actionsDiv = document.getElementById("actions");
+
+            if (selectedValue) {
+                actionsDiv.classList.remove("hidden");
+            } else {
+                actionsDiv.classList.add("hidden");
+                document.getElementById("response").innerHTML = "";
+            }
+
+            fetchData(selectedValue);
+        }
+
+        async function fetchData(societyId) {
+            if (!societyId) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/societies?society_id=${societyId}`);
+                const data = await response.json();
+                let htmlContent = '<table class="table table-bordered table-hover"><thead><tr>';
+                
+                // Get headers from the first object in the array
+                Object.keys(data[0]).forEach(key => {
+                    htmlContent += `<th>${capitalizeFirstLetter(key.replace(/_/g, ' '))}</th>`;
+                });
+                
+                htmlContent += '</tr></thead><tbody>';
+
+                data.forEach(item => {
+                    htmlContent += '<tr>';
+                    for (let key in item) {
+                        if (item.hasOwnProperty(key)) {
+                            let value = item[key];
+                            if (typeof value === 'object' && value !== null) {
+                                if (value.hasOwnProperty('$numberDouble')) {
+                                    value = value.$numberDouble || 'N/A';
+                                } else if (value.hasOwnProperty('$oid')) {
+                                    value = value.$oid || 'N/A';
+                                }
+                            }
+                            htmlContent += `<td>${value}</td>`;
+                        }
+                    }
+                    htmlContent += '</tr>';
+                });
+
+                htmlContent += '</tbody></table>';
+                document.getElementById("response").innerHTML = htmlContent;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById("response").innerHTML = "<p class='text-danger'>Error fetching data. Please try again.</p>";
+            }
+        }
+
+        function capitalizeFirstLetter(str) {
+            return str.replace(/\b\w/g, char => char.toUpperCase());
+        }
+
+        // Load the dropdown options when the page loads
+        fetchSocieties();
+
+        // Attach event handlers
+        document.getElementById('society').addEventListener('change', handleSocietySelect);
+
+        document.getElementById('add-user-btn').addEventListener('click', function () {
+            const societyId = document.getElementById("society").value;
+            alert(`Adding data to society: ${societyId}`);
+        });
+
+        document.getElementById('upload-excel-btn').addEventListener('click', function () {
+    const societyId = document.getElementById("society").value;
+    
+    // Create a file input dynamically to allow the user to select a file
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.xlsx';  // You can restrict to Excel files only (adjust the extension as needed)
+    
+    // When a file is selected
+    fileInput.onchange = async function () {
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            alert("No file selected.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('society_id', societyId);
+
+        // Now, upload the file using fetch
+        try {
+            const response = await fetch(`${API_BASE_URL}/upload?society_id=${societyId}`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                // You can display a success message or handle the response
+                alert('File uploaded successfully!');
+            } else {
+                alert('Failed to upload the file.');
+            }
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            alert('Error uploading file. Please try again.');
+        }
+    };
+
+    // Trigger the file input click to let the user select a file
+    fileInput.click();
+});
+
+
+        document.getElementById('download-sample-btn').addEventListener('click', function () {
+            const societyId = document.getElementById("society").value;
+
+            // Fetch the file from the server
+            fetch(`${API_BASE_URL}/download`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch file');
+                    }
+                    return response.blob();  // Convert the response to a Blob
+                })
+                .then(blob => {
+                    // Create a temporary URL for the file
+                    const url = window.URL.createObjectURL(blob);
+
+                    // Create an anchor element
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'members_data_with_formulas.xlsx';  // Set the default download filename
+                    document.body.appendChild(a);
+
+                    // Trigger a click event on the anchor element to start the download
+                    a.click();
+
+                    // Clean up by revoking the object URL and removing the anchor element
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                })
+                .catch(error => {
+                    console.error('Error downloading file:', error);
+                    alert('Error downloading file. Please try again.');
+                });
+        });
+
+    </script>
+</body>
+
+</html>

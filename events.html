@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 20px 0;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 200px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #eventsList {
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        .event-item {
+            background-color: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button.delete-btn {
+            background-color: #f44336;
+            margin-left: 10px;
+        }
+
+        button.update-btn {
+            background-color: #2196F3;
+        }
+
+        button.delete-btn:hover, button.update-btn:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Event Management</h1>
+
+    <!-- Form for creating or updating events -->
+    <div class="form-container">
+        <h2>Add / Update Event</h2>
+        <form id="eventForm">
+            <input type="hidden" id="eventId">
+            <input type="text" id="title" placeholder="Event Title" required>
+            <input type="date" id="date" placeholder="Event Date" required>
+            <input type="time" id="time" placeholder="Event Time" required>
+            <input type="text" id="location" placeholder="Event Location">
+            <button type="submit">Add Event</button>
+        </form>
+    </div>
+
+    <!-- Event list -->
+    <h2>Events</h2>
+    <div id="eventsList">
+        <!-- Event items will be dynamically populated here -->
+    </div>
+
+    <script>
+        const apiUrl = 'http://127.0.0.1:5000/api/events';
+        const eventsList = document.getElementById('eventsList');
+        const eventForm = document.getElementById('eventForm');
+        const eventIdInput = document.getElementById('eventId');
+        const titleInput = document.getElementById('title');
+        const dateInput = document.getElementById('date');
+        const timeInput = document.getElementById('time');
+        const locationInput = document.getElementById('location');
+
+        // Fetch events and display
+        async function fetchEvents() {
+            const response = await fetch(apiUrl);
+            const events = await response.json();
+
+            eventsList.innerHTML = ''; // Clear existing events
+            events.forEach(event => {
+                const eventDiv = document.createElement('div');
+                eventDiv.classList.add('event-item');
+                eventDiv.innerHTML = `
+                    <h3>${event.title}</h3>
+                    <p>Date: ${event.date}</p>
+                    <p>Time: ${event.time}</p>
+                    <p>Location: ${event.location || 'N/A'}</p>
+                    <button class="update-btn" onclick="editEvent('${event._id}')">Edit</button>
+                    <button class="delete-btn" onclick="deleteEvent('${event._id}')">Delete</button>
+                `;
+                eventsList.appendChild(eventDiv);
+            });
+        }
+
+        // Add new event
+        async function addEvent(eventData) {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(eventData),
+            });
+            const result = await response.json();
+            alert(result.message);
+            fetchEvents();
+        }
+
+        // Update existing event
+        async function updateEvent(eventData, eventId) {
+            const response = await fetch(`${apiUrl}/${eventId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(eventData),
+            });
+            const result = await response.json();
+            alert(result.message);
+            fetchEvents();
+        }
+
+        // Delete event
+        async function deleteEvent(eventId) {
+            const response = await fetch(`${apiUrl}/${eventId}`, {
+                method: 'DELETE',
+            });
+            const result = await response.json();
+            alert(result.message);
+            fetchEvents();
+        }
+
+        // Edit event - populate form
+        function editEvent(eventId) {
+            const eventDiv = Array.from(eventsList.children).find(e => 
+                e.querySelector('button.update-btn').getAttribute('onclick') === `editEvent('${eventId}')`
+            );
+            const title = eventDiv.querySelector('h3').innerText;
+            const date = eventDiv.querySelector('p:nth-of-type(1)').innerText.replace('Date: ', '');
+            const time = eventDiv.querySelector('p:nth-of-type(2)').innerText.replace('Time: ', '');
+            const location = eventDiv.querySelector('p:nth-of-type(3)').innerText.replace('Location: ', '') || '';
+
+            eventIdInput.value = eventId;
+            titleInput.value = title;
+            dateInput.value = date;
+            timeInput.value = time;
+            locationInput.value = location;
+        }
+
+        // Handle form submit
+        eventForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const eventData = {
+                title: titleInput.value,
+                date: dateInput.value,
+                time: timeInput.value,
+                location: locationInput.value,
+            };
+
+            if (eventIdInput.value) {
+                // Update the existing event
+                updateEvent(eventData, eventIdInput.value);
+            } else {
+                // Add a new event
+                addEvent(eventData);
+            }
+
+            // Reset form after submission
+            eventForm.reset();
+            eventIdInput.value = '';
+        });
+
+        // Initial fetch of events
+        fetchEvents();
+    </script>
+</body>
+</html>

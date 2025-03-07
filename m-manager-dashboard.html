@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Owner Dashboard</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
@@ -217,58 +217,66 @@
       margin-top: 256px;
     }
   </style>
-</head>
+  </head>
 
-<body>
-  <div class="main">
-    <div class="container-sidebar-form">
-      <div class="sidebar">
-        <div class="profile">
-          <img src="profile-photo.jpg" alt="Profile Photo">
-          <span id="username"></span>
-        </div>
-        <a href="javascript:void(0);" onclick="loadContent('dashboard.html')">
-          <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
-        </a>
-        <a href="javascript:void(0);" onclick="loadContent('events.html')">
-          <i class="fas fa-calendar-alt"></i><span>Event</span>
-        </a>
-        <a href="javascript:void(0);" onclick="loadContent('ticket-submission.html')">
-          <i class="fas fa-ticket-alt"></i><span>Complaint</span>
-        </a>
-        <a href="javascript:void(0);" onclick="loadContent('emergency-contacts.html')">
-          <i class="fas fa-phone-alt"></i><span>Emergency Contacts</span>
-        </a>
-        <a href="javascript:void(0);" onclick="loadContent('personal-details.html')">
-          <i class="fas fa-user"></i><span>Personal Details</span>
-        </a>
-        <a href="javascript:void(0);" onclick="loadContent('settings.html')">
-          <i class="fas fa-cog"></i><span>Settings</span>
-        </a>
-        <a href="javascript:void(0);" onclick="logout()">
-          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
-        </a>
-      </div>
-      <div class="content">
-        <div class="header">
-          <h1 id="username"></h1>
-        </div>
+  <body>
+    <div class="main">
+      <div class="container-sidebar-form">
+        <div class="sidebar">
+          <div class="profile">
+            <img src="profile-photo.jpg" alt="Profile Photo">
+            <span id="username"></span>
+          </div>
+          <a href="javascript:void(0);" onclick="loadContent('dashboard.html')">
+            <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+          </a>
+          <a href="javascript:void(0);"
+            onclick="loadContent('society-staff.html')">
+            <i class="fas fa-user-tie"></i><span>Society Staff</span>
+          </a>
 
-        <div id="dynamicContent">
-          <div class="ticket-container">
-            <div class="issue-ticket" >
-              <!-- Issue Ticket content here -->
-            </div>
-            <div class="ticket-status">
-              <!-- Ticket Status content here -->
+          <a href="javascript:void(0);" onclick="loadContent('events.html')">
+            <i class="fas fa-calendar-alt"></i><span>Event</span>
+          </a>
+          <a href="javascript:void(0);"
+            onclick="loadContent('ticket-submission.html')">
+            <i class="fas fa-ticket-alt"></i><span>Complaint</span>
+          </a>
+          <a href="javascript:void(0);"
+            onclick="loadContent('emergency-contacts.html')">
+            <i class="fas fa-phone-alt"></i><span>Emergency Contacts</span>
+          </a>
+          <a href="javascript:void(0);"
+            onclick="loadContent('personal-details.html')">
+            <i class="fas fa-id-card"></i><span>Personal Details</span>
+          </a>
+          <a href="javascript:void(0);" onclick="loadContent('settings.html')">
+            <i class="fas fa-cog"></i><span>Settings</span>
+          </a>
+          <a href="javascript:void(0);" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+          </a>
+        </div>
+        <div class="content">
+          <div class="header">
+            <h1 id="username"></h1>
+          </div>
+
+          <div id="dynamicContent">
+            <div class="ticket-container">
+              <div class="issue-ticket">
+                <!-- Issue Ticket content here -->
+              </div>
+              <div class="ticket-status">
+                <!-- Ticket Status content here -->
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script>
+    <script>
     function logout() {
       localStorage.removeItem('logedIn')
       localStorage.removeItem("users");  // Store the users array
@@ -276,25 +284,30 @@
     }
 
     function loadContent(url) {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      xhr.onload = function () {
-        if (this.status === 200) {
-          console.log("Content loaded successfully");
-          // Replace the content of the 'dynamicContent' div with the loaded content
-          document.getElementById('dynamicContent').innerHTML = this.responseText;
-          // Execute any scripts in the loaded content
-          const scripts = document.getElementById('dynamicContent').getElementsByTagName('script');
-          for (let i = 0; i < scripts.length; i++) {
-            eval(scripts[i].innerText);
-          }
-        } else {
-          console.log("Error loading content");
-          document.getElementById('dynamicContent').innerHTML = `<p>Error loading content. Please try again.</p>`;
-        }
-      };
-      xhr.send();
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.onload = function () {
+    if (this.status === 200) {
+      console.log("Content loaded successfully");
+      // Replace the content of the 'dynamicContent' div with the loaded content
+      document.getElementById('dynamicContent').innerHTML = this.responseText;
+      // Execute any scripts in the loaded content
+      const scripts = document.getElementById('dynamicContent').getElementsByTagName('script');
+      for (let i = 0; i < scripts.length; i++) {
+        eval(scripts[i].innerText);
+      }
+    } else {
+      console.log("Error loading content");
+      document.getElementById('dynamicContent').innerHTML = `<p>Error loading content. Please try again.</p>`;
     }
+  };
+  xhr.onerror = function () {
+    console.log("Request failed");
+    document.getElementById('dynamicContent').innerHTML = `<p>Request failed. Please check your connection.</p>`;
+  };
+  xhr.send();
+}
+
 
     // const allUsers = JSON.parse(localStorage.getItem('users')) || [];
     // Dashboard Script
@@ -322,6 +335,6 @@
       }
     };
   </script>
-</body>
+  </body>
 
 </html>

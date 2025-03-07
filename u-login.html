@@ -8,7 +8,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-image: url('logo/pexels-davidmcbee-1546166.jpg');
+      background-image: url('logo/Bgimage.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -171,9 +171,8 @@
 </head>
 
 <body>
-
   <header>
-    <a href="h-index.html" class="logo"><img src="logo\logo.webp" alt="Logo" height="50"></a>
+    <a href="h-index.html" class="logo"><img src="logo\logo.png" alt="Logo" height="50"></a>
     <nav>
       <a href="h-index.html">HOME</a>
       <a href="u-login.html">LOGIN</a>
@@ -236,7 +235,7 @@
             if (user.userType === 'Owner') {
               window.location.href = 'user-dashboard.html'; // Redirect to user dashboard
             } else if (user.userType === 'SCT') {
-              window.location.href = 'sct-dashboard.html'; // Redirect to SCT dashboard
+              window.location.href = 'user-dashboard.html'; // Redirect to SCT dashboard
             } else if (user.userType === 'Manager') {
               window.location.href = 'm-manager-dashboard.html'; // Redirect to Manager dashboard
             }
