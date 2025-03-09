@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login KlugerKopf</title>
-  <style>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login KlugerKopf</title>
+    <style>
     body {
       font-family: Arial, sans-serif;
       background-image: url('logo/Bgimage.jpg');
@@ -127,39 +127,32 @@
       display: block;
     }
   </style>
-</head>
+  </head>
 
-<body>
+  <body>
 
-  <header>
-    <a href="h-index.html" class="logo"><img src="logo\logo.png" alt="Logo" height="50"></a>
-    <nav>
-      <a href="h-index.html">HOME</a>
-      <a href="u-login.html">LOGIN</a>
-      <div class="dropdown">
-        <a href=>AGENT LOGIN</a>
-        <div class="dropdown-content">
-          <a href="m-login-manager.html">Manager Login</a>
-          <a href="a-admin-login.html">Admin Login</a>
-        </div>
-      </div>
-      <a href="#">ALERTS</a>
-      <a href="#">CONTACT US</a>
-      <a href="#">HELP & SUPPORT</a>
-      <a href="#">FAQ</a>
-    </nav>
-  </header>
+    <div id="header"></div>
 
-  <div class="container">
-    <h2>Admin Login</h2>
-    <form id="adminLoginForm">
-      <input type="text" id="adminUsername" name="adminUsername" placeholder="Username" required><br>
-      <input type="password" id="adminPassword" name="adminPassword" placeholder="Password" required><br>
-      <input type="submit" value="Login">
-    </form>
-  </div>
+    <script>
+         fetch('main-header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            });
+        </script>
 
-  <script>
+    <div class="container">
+      <h2>Admin Login</h2>
+      <form id="adminLoginForm">
+        <input type="text" id="adminUsername" name="adminUsername"
+          placeholder="Username" required><br>
+        <input type="password" id="adminPassword" name="adminPassword"
+          placeholder="Password" required><br>
+        <input type="submit" value="Login">
+      </form>
+    </div>
+
+    <script>
     const adminCredentials = {
       "Admin1": "1",
       "Admin2": "2",
@@ -184,6 +177,6 @@
       }
     });
   </script>
-</body>
+  </body>
 
 </html>

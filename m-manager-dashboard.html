@@ -230,6 +230,15 @@
           <a href="javascript:void(0);" onclick="loadContent('dashboard.html')">
             <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
           </a>
+          <script>
+            document.addEventListener("DOMContentLoaded", function() {
+              loadContent('dashboard.html'); // Load dashboard.html on page refresh
+            });
+          
+            function onLogin() {
+              loadContent('dashboard.html'); // Load dashboard.html after login
+            }
+          </script>
           <a href="javascript:void(0);"
             onclick="loadContent('society-staff.html')">
             <i class="fas fa-user-tie"></i><span>Society Staff</span>
@@ -243,7 +252,7 @@
             <i class="fas fa-ticket-alt"></i><span>Complaint</span>
           </a>
           <a href="javascript:void(0);"
-            onclick="loadContent('emergency-contacts.html')">
+            onclick="loadContent('m-emergency-contacts .html')">
             <i class="fas fa-phone-alt"></i><span>Emergency Contacts</span>
           </a>
           <a href="javascript:void(0);"
@@ -258,9 +267,9 @@
           </a>
         </div>
         <div class="content">
-          <div class="header">
+          <!-- <div class="header">
             <h1 id="username"></h1>
-          </div>
+          </div> -->
 
           <div id="dynamicContent">
             <div class="ticket-container">
@@ -308,17 +317,9 @@
   xhr.send();
 }
 
-
-    // const allUsers = JSON.parse(localStorage.getItem('users')) || [];
-    // Dashboard Script
-    const luser = localStorage.getItem("logedIn");
-    const allUsers = JSON.parse(localStorage.getItem('users')) || [];
-
-    // Find user based on logged-in username
-    const userExists = allUsers.find(user => user.createUsername === luser);
-
-    if (userExists) {
-      document.getElementById('username').textContent = ` ${userExists.fullName}`;
+    const userData = JSON.parse(localStorage.getItem('users')) || [];    
+    if (userData) {
+      document.getElementById('username').textContent = ` ${userData.fullName}`;
       document.getElementById('profileName').textContent = userExists.fullName;
       // Automatically load the dashboard content
       loadContent('dashboard.html');

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin Customization</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .sidebar {
+      width: 250px;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #333;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+    }
+
+    .sidebar a {
+      padding: 10px 15px;
+      text-decoration: none;
+      font-size: 18px;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #575757;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      transition: margin-left 0.5s;
+      padding: 20px;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans">
+  <div class="sidebar">
+    <a href="a-admin-dashboard.html"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+    <a href="society.html"><i class="fas fa-building"></i>Society</a>
+    <a href="manager.html"><i class="fas fa-user-tie"></i>Managers</a>
+    <a href="m-user-data.html"><i class="fas fa-users"></i>Society Staff</a>
+    <a href="ticket-dashboard.html"><i class="fas fa-ticket-alt"></i>Ticket Dashboard</a>
+    <a href="administration.html"><i class="fas fa-cogs"></i>Administration</a>
+    <a href="finance.html"><i class="fas fa-money-check-alt"></i>Finance</a>
+    <a href="services.html"><i class="fas fa-briefcase"></i>Services</a>
+    <a href="a-admin-login.html" onclick="logout()" id="logoutBtn" class="hidden"><i class="fas fa-sign-out-alt"></i>Logout</a>
+  </div>
+
+  <div class="main-content">
+    <h2 class="text-2xl text-gray-800 mb-4">Super Admin Customization</h2>
+    <div class="flex flex-col space-y-4">
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h3 class="text-xl text-gray-700">SCT Settings</h3>
+        <p class="text-gray-600">Customize SCT access for admins and managers.</p>
+        <div class="flex space-x-4">
+          <input type="checkbox" id="sctAdmin" class="form-checkbox">
+          <label for="sctAdmin" class="text-gray-700">Enable SCT for Admins</label>
+        </div>
+        <div class="flex space-x-4">
+          <input type="checkbox" id="sctManager" class="form-checkbox">
+          <label for="sctManager" class="text-gray-700">Enable SCT for Managers</label>
+        </div>
+      </div>
+
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h3 class="text-xl text-gray-700">Members Settings</h3>
+        <p class="text-gray-600">Manage member access and permissions.</p>
+        <div class="flex space-x-4">
+          <input type="checkbox" id="memberAccess" class="form-checkbox">
+          <label for="memberAccess" class="text-gray-700">Allow Members Access</label>
+        </div>
+      </div>
+
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h3 class="text-xl text-gray-700">MC Type Settings</h3>
+        <p class="text-gray-600">Customize MC type access for different roles.</p>
+        <div class="flex space-x-4">
+          <input type="checkbox" id="mcTypeAdmin" class="form-checkbox">
+          <label for="mcTypeAdmin" class="text-gray-700">Enable MC Type for Admins</label>
+        </div>
+        <div class="flex space-x-4">
+          <input type="checkbox" id="mcTypeManager" class="form-checkbox">
+          <label for="mcTypeManager" class="text-gray-700">Enable MC Type for Managers</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('loggedId');
+      window.location.href = 'a-admin-login.html';
+    }
+
+    const loggedId = localStorage.getItem('loggedId');
+    if (loggedId) {
+      document.getElementById('logoutBtn').classList.remove('hidden');
+    }
+  </script>
+</body>
+
+</html>

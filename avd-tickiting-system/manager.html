@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin Access Control</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .sidebar {
+      width: 250px;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #333;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+    }
+
+    .sidebar a {
+      padding: 10px 15px;
+      text-decoration: none;
+      font-size: 18px;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #575757;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      transition: margin-left 0.5s;
+      padding: 20px;
+    }
+
+    .customization-section {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans">
+  <div class="sidebar">
+    <a href="a-admin-dashboard.html"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+    <a href="society.html"><i class="fas fa-building"></i>Society</a>
+    <a href="manager.html"><i class="fas fa-user-tie"></i>Managers</a>
+    <a href="m-user-data.html"><i class="fas fa-users"></i>Society Staff</a>
+    <a href="ticket-dashboard.html"><i class="fas fa-ticket-alt"></i>Ticket Dashboard</a>
+    <a href="administration.html"><i class="fas fa-cogs"></i>Administration</a>
+    <a href="finance.html"><i class="fas fa-money-check-alt"></i>Finance</a>
+    <a href="services.html"><i class="fas fa-briefcase"></i>Services</a>
+    <a href="superadmin.html"><i class="fas fa-user-shield"></i>Super Admin</a>
+    <a href="a-admin-login.html" onclick="logout()" id="logoutBtn" class="hidden"><i class="fas fa-sign-out-alt"></i>Logout</a>
+  </div>
+
+  <div class="main-content">
+    <h2 class="text-2xl text-gray-800 mb-4">Super Admin Access Control</h2>
+
+    <div class="customization-section">
+      <h3 class="text-xl text-gray-700 mb-2">Customize Access for Admins and Managers</h3>
+      <div class="flex space-x-4">
+        <div class="flex-1">
+          <label class="block text-gray-600">SCT:</label>
+          <select class="w-full p-2 border rounded">
+            <option value="full">Full Access</option>
+            <option value="limited">Limited Access</option>
+            <option value="none">No Access</option>
+          </select>
+        </div>
+        <div class="flex-1">
+          <label class="block text-gray-600">Members:</label>
+          <select class="w-full p-2 border rounded">
+            <option value="full">Full Access</option>
+            <option value="limited">Limited Access</option>
+            <option value="none">No Access</option>
+          </select>
+        </div>
+        <div class="flex-1">
+          <label class="block text-gray-600">MC Type:</label>
+          <select class="w-full p-2 border rounded">
+            <option value="full">Full Access</option>
+            <option value="limited">Limited Access</option>
+            <option value="none">No Access</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center mb-4">
+      <button onclick="saveSettings()" class="bg-blue-600 text-white py-2 px-4 rounded">Save Settings</button>
+    </div>
+
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl text-gray-700">View Customization Options</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse">
+        <thead class="bg-green-600 text-white">
+          <tr>
+            <th class="p-2 border">Option</th>
+            <th class="p-2 border">Current Setting</th>
+          </tr>
+        </thead>
+        <tbody id="customizationOptions">
+          <tr>
+            <td class="p-2 border">SCT</td>
+            <td class="p-2 border">Full Access</td>
+          </tr>
+          <tr>
+            <td class="p-2 border">Members</td>
+            <td class="p-2 border">Limited Access</td>
+          </tr>
+          <tr>
+            <td class="p-2 border">MC Type</td>
+            <td class="p-2 border">No Access</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function saveSettings() {
+      // Logic to save the settings goes here
+      alert('Settings saved successfully!');
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedId');
+      window.location.href = 'a-admin-login.html';
+    }
+
+    const loggedId = localStorage.getItem('loggedId');
+    if (loggedId) {
+      document.getElementById('logoutBtn').classList.remove('hidden');
+    }
+  </script>
+</body>
+
+</html>

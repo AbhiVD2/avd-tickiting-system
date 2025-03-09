@@ -1,199 +1,399 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Owner Dashboard</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+            rel="stylesheet">
+        <link rel="stylesheet" type="text/css"
+            href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+        <style>
+            .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+    }
 
-<body class="bg-gray-100">
-    <div class="space-y-6 p-6">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <p class="text-gray-500">Welcome back, <span id="userName"></span></p>
+    /* Modal Content */
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        max-height: 80vh;
+        overflow-y: auto;
+        width: 70%;
+        position: relative;
+    }
+
+    /* Close Button */
+    #closeModal {
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 5px;
+        background-color: transparent;
+        border: none;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    /* Table Styling (DataTables takes care of most styling) */
+    /* table {
+        width: 100%;
+    } */
+
+
+    </style>
+    </head>
+
+    <body class="bg-gray-100 ">
+        <div class="space-y-6 p-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Owner
+                    Dashboard</h1>
+                <p class="text-gray-500">Welcome back, <span
+                        id="userName"></span></p>
+            </div>
+
+            <script>
+            const userData = JSON.parse(localStorage.getItem('users')) || [];
+            document.getElementById("userName").textContent = userData.fullName;
+        </script>
+
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                <!-- Total Complaints -->
+                <div
+                    class="bg-gradient-to-br from-green-500 to-green-600 text-white p-4 rounded-lg shadow-md">
+                    <div class="flex items-center">
+                        <div
+                            class="p-3 rounded-full bg-green-700 bg-opacity-30">
+                            <svg class="w-6 h-6" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2"
+                                    d="M7 8h10M7 12h10m-7 4h7"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-green-100">Total
+                                Complaints</p>
+                            <p class="text-2xl font-semibold"
+                                id="totalComplaints">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Open Complaints -->
+                <div
+                    class="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white p-4 rounded-lg shadow-md">
+                    <div class="flex items-center">
+                        <div
+                            class="p-3 rounded-full bg-yellow-700 bg-opacity-30">
+                            <svg class="w-6 h-6" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2"
+                                    d="M7 8h10M7 12h10m-7 4h7"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-yellow-100">Open
+                                Complaints</p>
+                            <p class="text-2xl font-semibold"
+                                id="openComplaints">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div
+                    class="bg-gradient-to-br from-red-500 to-red-600 text-white p-4 rounded-lg shadow-md">
+                    <div class="flex items-center">
+                        <div
+                            class="p-3 rounded-full bg-amber-700 bg-opacity-30">
+                            <svg class="w-6 h-6" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p
+                                class="text-sm font-medium text-amber-100">Upcoming
+                                Events</p>
+                            <p class="text-2xl font-semibold"
+                                id="upcomingEventsCount">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Recent Complaints -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-lg font-semibold text-gray-900">Recent
+                        Complaints</h2>
+                    <div class="space-y-4 mt-4">
+                        <div class="border-b border-gray-200 pb-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-medium text-gray-900"
+                                        id="complaint-subject">Complaint
+                                        Title</h4>
+                                    <p
+                                        class="text-sm text-gray-500 mt-1 line-clamp-2"
+                                        id="complaint-description">Complaint
+                                        description goes
+                                        here...</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <span
+                                        class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Open</span>
+                                    <span
+                                        class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">High</span>
+                                </div>
+                            </div>
+                            <div
+                                class="flex justify-between items-center mt-2 text-xs text-gray-500">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                    <span id="complaint-createdAt">Jan 1,
+                                        2023</span>
+                                </div>
+                                <span
+                                    class="bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Requires
+                                    Approval</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <a href="#"
+                            class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                            id="viewComplaintsButton">View all
+                            complaints</a>
+                    </div>
+                </div>
+
+                <!-- Modal HTML -->
+                <div id="complaintsModal" class="w-full max-w-24 ">
+                    <div class="modal-content">
+                        <button id="closeModal"
+                            class="text-xl font-bold">X</button>
+                        <h2 class="text-2xl font-semibold mb-4">All
+                            Complaints</h2>
+                        <table id="complaintsTable" class="display">
+                            <thead>
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Subject</th>
+                                    <th>Issue Location</th>
+                                    <th>Status</th>
+                                    <th>Created At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be dynamically populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-lg font-semibold text-gray-900">Upcoming
+                        Events</h2>
+                    <div class="space-y-4" id="upcomingEvents">
+                        <!-- Events will be dynamically loaded here -->
+                    </div>
+                    <div class="mt-4 text-center" id="manageEventsLink">
+                        <!-- Manage events link will be dynamically added here if user type is SCT -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div
+            class="flex justify-between items-center pt-4 border-t border-gray-200 text-sm text-gray-500">
+            <div class="flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M12 20h.01M12 4h.01M4 12h.01M20 12h.01M12 12h.01M12 12h.01"></path>
+                </svg>
+                <span>Society Management Dashboard</span>
+            </div>
+            <div>
+                <span>15:27</span>
+            </div>
         </div>
 
         <script>
-            const loggedInUserName = "John Doe"; // Replace with actual user data
-            document.getElementById("userName").textContent = loggedInUserName;
-        </script>
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+        const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+        const loggedInUser = localStorage.getItem('logedIn');
+        const userSociety = allUsers?.society_id;
+        const url = `${API_BASE_URL}/api/tickets`;
+    
 
 
-        <!-- Stats Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        const viewComplaintsButton = document.getElementById("viewComplaintsButton");
+        const complaintsModal = document.getElementById('complaintsModal');
+        const closeModalButton = document.getElementById('closeModal');
+        const complaintsTable = document.getElementById('complaintsTable').getElementsByTagName('tbody')[0];
+        
 
-            <!-- Total Complaints -->
-            <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-4 rounded-lg shadow-md">
-                <div class="flex items-center">
-                    <div class="p-3 rounded-full bg-green-700 bg-opacity-30">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 8h10M7 12h10m-7 4h7"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-green-100">Total Complaints</p>
-                        <p class="text-2xl font-semibold" id="totalComplaints">0</p>
-                    </div>
-                </div>
-            </div>
+        // Open Modal
+        viewComplaintsButton.addEventListener('click', async function () {
+            complaintsModal.style.display = 'flex';
+            await fetchComplaints();
+        });
 
-            <!-- Open Complaints -->
-            <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white p-4 rounded-lg shadow-md">
-                <div class="flex items-center">
-                    <div class="p-3 rounded-full bg-yellow-700 bg-opacity-30">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 8h10M7 12h10m-7 4h7"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-yellow-100">Open Complaints</p>
-                        <p class="text-2xl font-semibold" id="openComplaints">0</p>
-                    </div>
-                </div>
-            </div>
+        // Close Modal
+        closeModalButton.addEventListener('click', function () {
+            complaintsModal.style.display = 'none';
+        });
 
-            <!-- Upcoming Events -->
-            <div class="bg-gradient-to-br from-red-500 to-red-600 text-white p-4 rounded-lg shadow-md">
-                <div class="flex items-center">
-                    <div class="p-3 rounded-full bg-amber-700 bg-opacity-30">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-amber-100">Upcoming Events</p>
-                        <p class="text-2xl font-semibold" id="upcomingEventsCount">0</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        function populateComplaintsTable(complaints) {
+            complaintsTable.innerHTML = ''; // Clear existing rows
 
-        <!-- Main Dashboard Content -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Recent Complaints -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-lg font-semibold text-gray-900">Recent Complaints</h2>
-                <div class="space-y-4 mt-4">
-                    <div class="border-b border-gray-200 pb-4">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="font-medium text-gray-900">Complaint Title</h4>
-                                <p class="text-sm text-gray-500 mt-1 line-clamp-2">Complaint description goes
-                                    here...</p>
-                            </div>
-                            <div class="flex space-x-2">
-                                <span
-                                    class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Open</span>
-                                <span
-                                    class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">High</span>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center mt-2 text-xs text-gray-500">
-                            <div class="flex items-center">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                    </path>
-                                </svg>
-                                Jan 1, 2023
-                            </div>
-                            <span
-                                class="bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Requires
-                                Approval</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-4 text-center">
-                    <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View all
-                        complaints</a>
-                </div>
-            </div>
+            complaints.forEach(complaint => {
+                const row = complaintsTable.insertRow();
+                row.innerHTML = `
+                    <td>${complaint.tickitId}</td>
+                    <td>${complaint.fullName}</td>
+                    <td>${complaint.email}</td>
+                    <td>${complaint.subject}</td>
+                    <td>${complaint.issueLocation}</td>
+                    <td>${complaint.status}</td>
+                    <td>${formatDate(complaint.createdAt)}</td>
+                `;
+            });
 
-            <!-- Upcoming Events -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-lg font-semibold text-gray-900">Upcoming Events</h2>
-                <div class="space-y-4" id="upcomingEvents">
-                    <!-- Events will be dynamically loaded here -->
-                </div>
-                <div class="mt-4 text-center" id="manageEventsLink">
-                    <!-- Manage events link will be dynamically added here if user type is SCT -->
-                </div>
-            </div>
-        </div>
-    </div>
+            // Re-initialize the DataTable after populating the table rows
+            if ($.fn.dataTable.isDataTable('#complaintsTable')) {
+                $('#complaintsTable').DataTable().clear().destroy();
+            }
 
-    <!-- Footer -->
-    <div class="flex justify-between items-center pt-4 border-t border-gray-200 text-sm text-gray-500">
-        <div class="flex items-center">
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M13 16h-1v-4h-1m1-4h.01M12 20h.01M12 4h.01M4 12h.01M20 12h.01M12 12h.01M12 12h.01"></path>
-            </svg>
-            <span>Society Management Dashboard</span>
-        </div>
-        <div>
-            <span>15:27</span>
-        </div>
-    </div>
+            // Initialize DataTable with the newly populated data
+            $('#complaintsTable').DataTable({
+                "paging": true,   // Enable pagination
+                "searching": true, // Enable search
+                "info": true      // Display info
+            });
+        }
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const allComplaints = JSON.parse(localStorage.getItem('complaints')) || [];
-            const loggedInUser = localStorage.getItem("logedIn");
-            const allEvents = JSON.parse(localStorage.getItem('events')) || [];
 
-            const userComplaints = allComplaints.filter(complaint => complaint.username === loggedInUser);
-            document.getElementById('totalComplaints').textContent = userComplaints.length;
+        // Format Date
+        function formatDate(dateString) {
+            const [date, time] = dateString.split(', ');
+            const [day, month, year] = date.split('/');
+            const formattedDate = new Date(`${month}/${day}/${year} ${time}`);
+            return formattedDate.toLocaleString();
+        }
 
-            const openComplaints = userComplaints.filter(complaint => complaint.status === 'open');
+        async function fetchComplaints() {
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Logged-In-User': allUsers._id
+                    }
+                });
+    
+                if (!response.ok) throw new Error('Failed to fetch tickets');
+    
+                const allComplaints = await response.json();
+                const allEvents = JSON.parse(localStorage.getItem('events')) || [];
+    
+                updateComplaintStats(allComplaints);
+                updateUpcomingEvents(allEvents, userSociety);
+                populateComplaintsTable(allComplaints);
+    
+            } catch (error) {
+                console.error('Error fetching complaints:', error);
+            }
+        }
+    
+        function updateComplaintStats(allComplaints) {
+            const openComplaints = allComplaints.filter(complaint => complaint.status === 'Open');
+            const sortedComplaints = allComplaints.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+            document.getElementById('totalComplaints').textContent = allComplaints.length;
             document.getElementById('openComplaints').textContent = openComplaints.length;
-
-            const user = JSON.parse(localStorage.getItem('users')).find(user => user.createUsername === loggedInUser);
-            const userSociety = user ? user.societyName : null;
-            const userType = user ? user.userType : null;
-
+            document.getElementById('complaint-subject').textContent = sortedComplaints[0]?.subject || 'No Recent Complaints found!';
+            document.getElementById('complaint-description').textContent = sortedComplaints[0]?.description || 'No Recent Complaints found!';
+            document.getElementById('complaint-createdAt').textContent = sortedComplaints[0] ? formatDate(sortedComplaints[0].createdAt) : 'No Recent Complaints found!';
+        }
+    
+        function updateUpcomingEvents(allEvents, userSociety) {
+            if (!userSociety) return;
+    
             const societyEvents = allEvents.filter(event => event.societyName === userSociety);
             document.getElementById('upcomingEventsCount').textContent = societyEvents.length;
-
+    
             const upcomingEventsContainer = document.getElementById('upcomingEvents');
             const sortedEvents = societyEvents.sort((a, b) => new Date(a.date) - new Date(b.date)).slice(0, 5);
+            upcomingEventsContainer.innerHTML = ''; // Clear existing events
+    
             sortedEvents.forEach(event => {
                 const eventElement = document.createElement('div');
                 eventElement.innerHTML = `
                     <h4 class="font-medium text-gray-900">${event.title}</h4>
                     <div class="flex items-center mt-1 text-sm text-gray-500">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                            </path>
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                         ${event.date} at ${event.time}
                     </div>
                 `;
                 upcomingEventsContainer.appendChild(eventElement);
             });
-
-            if (userType === 'SCT') {
-                const manageEventsLink = document.createElement('a');
-                manageEventsLink.href = '#';
-                manageEventsLink.classList.add('text-blue-600', 'hover:text-blue-800', 'text-sm', 'font-medium');
-                manageEventsLink.textContent = 'Manage events';
-                document.getElementById('manageEventsLink').appendChild(manageEventsLink);
-            }
-        });
+        }
+    
+        function formatDate(dateString) {
+            const [date, time] = dateString.split(', ');
+            const [day, month, year] = date.split('/');
+            const formattedDate = new Date(`${month}/${day}/${year} ${time}`);
+            return isNaN(formattedDate) ? 'Invalid Date' : formattedDate.toLocaleString();
+        }
+    
+        fetchComplaints();
     </script>
-</body>
+        <script type="text/javascript" charset="utf8"
+            src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!-- Include DataTables JS -->
+        <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+    </body>
 
 </html>

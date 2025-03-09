@@ -227,7 +227,7 @@
         const userExists = allUsers.find(user => user.createUsername === luser);
 
         const params = new URLSearchParams();
-        params.append('manager_id', userExists.managers);
+        params.append('manager_id', allUsers.managers);
         const queryString = params.toString();
 
         const url= `${API_BASE_URL}`+'/api/tickets'
@@ -238,7 +238,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-Logged-In-User':userExists._id
+            'X-Logged-In-User':allUsers._id
           },
           body: JSON.stringify(ticketData)
         });

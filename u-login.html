@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login KlugerKopf</title>
-  <style>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login KlugerKopf</title>
+    <style>
     body {
       font-family: Arial, sans-serif;
       background-image: url('logo/Bgimage.jpg');
@@ -168,45 +168,37 @@
       background-color: #3e8e41;
     }
   </style>
-</head>
+  </head>
 
-<body>
-  <header>
-    <a href="h-index.html" class="logo"><img src="logo\logo.png" alt="Logo" height="50"></a>
-    <nav>
-      <a href="h-index.html">HOME</a>
-      <a href="u-login.html">LOGIN</a>
-      <!-- <a href="signup.html">REGISTER</a> -->
-      <div class="dropdown">
-        <a href="#" class="dropbtn">AGENT LOGIN</a>
-        <div class="dropdown-content">
-          <a href="m-login-manager.html">Manager Login</a>
-          <a href="a-admin-login.html">Admin Login</a>
-        </div>
-      </div>
-      <a href="#">ALERTS</a>
-      <a href="#">CONTACT US</a>
-      <a href="#">HELP & SUPPORT</a>
-      <a href="#">FAQ</a>
-    </nav>
-  </header>
-  <div class="container">
+  <body>
+    <div id="header"></div>
 
-    <h2>Login KlugerKopf</h2>
-    <form id="loginForm">
-      <input type="text" id="username" name="username" placeholder="Username" required><br>
-      <input type="password" id="password" name="password" placeholder="Password" required><br>
-      <input type="submit" value="Login">
-    </form>
-    <!-- Removed Signup button -->
-  </div>
+    <script>
+         fetch('main-header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            });
+        </script>
+    <div class="container">
 
-  <div class="dialog-box" id="dialogBox">
-    <p id="dialogMessage"></p>
-    <button onclick="closeDialog()">Close</button>
-  </div>
+      <h2>Login KlugerKopf</h2>
+      <form id="loginForm">
+        <input type="text" id="username" name="username" placeholder="Username"
+          required><br>
+        <input type="password" id="password" name="password"
+          placeholder="Password" required><br>
+        <input type="submit" value="Login">
+      </form>
+      <!-- Removed Signup button -->
+    </div>
 
-  <script>
+    <div class="dialog-box" id="dialogBox">
+      <p id="dialogMessage"></p>
+      <button onclick="closeDialog()">Close</button>
+    </div>
+
+    <script>
     // Check if user is already logged in and redirect to the dashboard
     if (localStorage.getItem("logedIn")) {
       window.location.href = 'user-dashboard.html'; // Redirect if logged in
@@ -231,7 +223,7 @@
 
           if (user) {
             localStorage.setItem("logedIn", username); // Store the logged-in username
-            localStorage.setItem("users", JSON.stringify(users));  // Store the users array
+            localStorage.setItem("users", JSON.stringify(user));  // Store the users array
             if (user.userType === 'Owner') {
               window.location.href = 'user-dashboard.html'; // Redirect to user dashboard
             } else if (user.userType === 'SCT') {
@@ -255,6 +247,6 @@
       document.getElementById('dialogBox').style.display = 'none';
     }
   </script>
-</body>
+  </body>
 
 </html>

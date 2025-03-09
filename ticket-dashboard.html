@@ -1,13 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ticket Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous">
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
+    <link rel="stylesheet" type="text/css"
+      href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
     .sidebar {
       width: 250px;
       height: 100%;
@@ -41,88 +53,107 @@
       padding: 20px;
     }
   </style>
-</head>
+  </head>
 
-<body class="bg-gray-100 font-sans">
-  <div class="sidebar">
-    <a href="a-admin-dashboard.html"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
-    <a href="society.html"><i class="fas fa-building"></i>Society</a>
-    <a href="manager.html"><i class="fas fa-user-tie"></i>Managers</a>
-    <a href="m-user-data.html"><i class="fas fa-users"></i>Users Data</a>
-    <a href="ticket-dashboard.html"><i class="fas fa-ticket-alt"></i>Ticket Dashboard</a>
-    <a href="administration.html"><i class="fas fa-cogs"></i>Administration</a>
-    <a href="finance.html"><i class="fas fa-money-check-alt"></i>Finance</a>
-    <a href="services.html"><i class="fas fa-briefcase"></i>Services</a>
-    <a href="a-admin-login.html" onclick="logout()" id="logoutBtn" class="hidden"><i class="fas fa-sign-out-alt"></i>Logout</a>
-  </div>
-
-  <div class="main-content">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
-      <div class="bg-white p-5 rounded-lg shadow text-center">
-        <h3 class="text-2xl text-green-600">Total Tickets</h3>
-        <p id="totalTickets" class="text-4xl text-gray-800 my-2">0</p>
-        <small class="text-gray-600">Total number of tickets submitted</small>
-      </div>
-      <div class="bg-white p-5 rounded-lg shadow text-center">
-        <h3 class="text-2xl text-green-600">Open Tickets</h3>
-        <p id="openTickets" class="text-4xl text-gray-800 my-2">0</p>
-        <small class="text-gray-600">Tickets that are currently open</small>
-      </div>
-      <div class="bg-white p-5 rounded-lg shadow text-center">
-        <h3 class="text-2xl text-green-600">Closed Tickets</h3>
-        <p id="closedTickets" class="text-4xl text-gray-800 my-2">0</p>
-        <small class="text-gray-600">Tickets that have been closed</small>
-      </div>
-      <div class="bg-white p-5 rounded-lg shadow text-center">
-        <h3 class="text-2xl text-green-600">Average Response Time</h3>
-        <p id="avgResponseTime" class="text-4xl text-gray-800 my-2">0h</p>
-        <small class="text-gray-600">Average time to respond to tickets</small>
-      </div>
-      <div class="bg-white p-5 rounded-lg shadow text-center">
-        <h3 class="text-2xl text-green-600">Unassigned Tickets</h3>
-        <p id="unassignedTickets" class="text-4xl text-gray-800 my-2">0</p>
-        <small class="text-gray-600">Tickets that are currently unassigned</small>
-      </div>
-      <div class="bg-white p-5 rounded-lg shadow text-center">
-        <h3 class="text-2xl text-green-600">Assigned Tickets</h3>
-        <p id="assignedTickets" class="text-4xl text-gray-800 my-2">0</p>
-        <small class="text-gray-600">Tickets that are currently assigned</small>
-      </div>
+  <body class="bg-gray-100 font-sans">
+    <div class="sidebar">
+      <a href="a-admin-dashboard.html"><i
+          class="fas fa-tachometer-alt"></i>Dashboard</a>
+      <a href="society.html"><i class="fas fa-building"></i>Society</a>
+      <a href="manager.html"><i class="fas fa-user-tie"></i>Managers</a>
+      <a href="m-user-data.html"><i class="fas fa-users"></i>Users Data</a>
+      <a href="ticket-dashboard.html"><i class="fas fa-ticket-alt"></i>Ticket
+        Dashboard</a>
+      <a href="administration.html"><i
+          class="fas fa-cogs"></i>Administration</a>
+      <a href="finance.html"><i class="fas fa-money-check-alt"></i>Finance</a>
+      <a href="services.html"><i class="fas fa-briefcase"></i>Services</a>
+      <a href="a-admin-login.html" onclick="logout()" id="logoutBtn"
+        class="hidden"><i class="fas fa-sign-out-alt"></i>Logout</a>
     </div>
 
-    <div class="overflow-x-auto overflow-y-auto max-h-96 mt-5 relative">
-      <table class="w-full border-collapse">
-        <thead class="bg-green-600 text-white sticky top-0 z-10">
-          <tr>
-            <th class="p-2 border">Ticket Id</th>
-            <th class="p-2 border">Ticket No</th>
-            <th class="p-2 border">Start date</th>
-            <th class="p-2 border">Name of Owner / applicant</th>
-            <th class="p-2 border">Email Id</th>
-            <th class="p-2 border">Subject</th>
-            <th class="p-2 border">Location</th>
-            <th class="p-2 border">Description</th>
-            <th class="p-2 border">Society</th>
-            <th class="p-2 border">Wing and Flat No.</th>
-            <th class="p-2 border">Status</th>
-            <th class="p-2 border">Priority</th>
-            <th class="p-2 border">Last Updated</th>
-            <th class="p-2 border">Approval Status From S/C/T</th>
-            <th class="p-2 border">Name of S/C/T</th>
-            <th class="p-2 border">Admin Approval</th>
-            <th class="p-2 border">Admin Approval</th>
-            <th class="p-2 border">Assign</th>
-            <th class="p-2 border">Edit</th>
-          </tr>
-        </thead>
-        <tbody id="ticketTableBody">
-          <!-- Ticket data will be populated here -->
-        </tbody>
-      </table>
-    </div>
-  </div>
+    <div class="main-content">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
+        <div class="bg-white p-5 rounded-lg shadow text-center">
+          <h3 class="text-2xl text-green-600">Total Tickets</h3>
+          <p id="totalTickets" class="text-4xl text-gray-800 my-2">0</p>
+          <small class="text-gray-600">Total number of tickets submitted</small>
+        </div>
+        <div class="bg-white p-5 rounded-lg shadow text-center">
+          <h3 class="text-2xl text-green-600">Open Tickets</h3>
+          <p id="openTickets" class="text-4xl text-gray-800 my-2">0</p>
+          <small class="text-gray-600">Tickets that are currently open</small>
+        </div>
+        <div class="bg-white p-5 rounded-lg shadow text-center">
+          <h3 class="text-2xl text-green-600">Closed Tickets</h3>
+          <p id="closedTickets" class="text-4xl text-gray-800 my-2">0</p>
+          <small class="text-gray-600">Tickets that have been closed</small>
+        </div>
+        <div class="bg-white p-5 rounded-lg shadow text-center">
+          <h3 class="text-2xl text-green-600">Average Response Time</h3>
+          <p id="avgResponseTime" class="text-4xl text-gray-800 my-2">0h</p>
+          <small class="text-gray-600">Average time to respond to
+            tickets</small>
+        </div>
+        <div class="bg-white p-5 rounded-lg shadow text-center">
+          <h3 class="text-2xl text-green-600">Unassigned Tickets</h3>
+          <p id="unassignedTickets" class="text-4xl text-gray-800 my-2">0</p>
+          <small class="text-gray-600">Tickets that are currently
+            unassigned</small>
+        </div>
+        <div class="bg-white p-5 rounded-lg shadow text-center">
+          <h3 class="text-2xl text-green-600">Assigned Tickets</h3>
+          <p id="assignedTickets" class="text-4xl text-gray-800 my-2">0</p>
+          <small class="text-gray-600">Tickets that are currently
+            assigned</small>
+        </div>
+      </div>
+      <section class="panel">
+        <div class="panel-heading">
 
-  <script>
+        </div>
+        <div class="panel panel-body">
+
+          <div class="bg-white p-5 rounded-lg shadow text-center">
+            <div class="overflow-x-auto overflow-y-auto max-h-96 mt-5 relative">
+              <table id="ticketTable" class="display">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Ticket ID</th>
+                    <th>Created At</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Subject</th>
+                    <th>Issue Location</th>
+                    <th>Description</th>
+                    <th>Society ID</th>
+                    <th>Building No.</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Last Updated</th>
+                    <th>Instruction Type</th>
+                    <th>Additional Requirement</th>
+                    <th>Ticket Status</th>
+                    <th>Approval From</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Data will be inserted here by DataTable -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8"
+      src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
 
     const DOMAIN = 'http://127.0.0.1:5000/'
 
@@ -141,48 +172,69 @@
 
     // Fetch ticket data from localStorage
     async function fetchTickets() {
-      const response = await fetch(`${DOMAIN}`+'api/tickets');
-      const tickets = await response.json();
-      const ticketTableBody = document.getElementById('ticketTableBody');
+    const response = await fetch(`${DOMAIN}api/tickets`);
+    const tickets = await response.json();
 
-      tickets.forEach((ticket, index) => {
-        const row = document.createElement('tr');
-        row.className = ticket.status === 'Open' ? 'bg-green-100' : '';
-        row.innerHTML = `
-          <td class="p-2 border">${index + 1}</td>
-          <td class="p-2 border">${ticket.tickitId}</td>
-          <td class="p-2 border">${ticket.createdAt}</td>
-          <td class="p-2 border">${ticket.fullName}</td>
-          <td class="p-2 border">${ticket.email}</td>
-          <td class="p-2 border">${ticket.subject}</td>
-          <td class="p-2 border">${ticket.issueLocation}</td>
-          <td class="p-2 border">${ticket.description}</td>
-          <td class="p-2 border">${ticket.society_id}</td>
-          <td class="p-2 border">${ticket.wingBuildingNo}</td>
-          <td class="p-2 border">
-            <select onchange="updateStatus('${ticket._id}', this.value)" class="p-1 border rounded">
-              <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>Open</option>
-              <option value="Closed" ${ticket.status === 'Closed' ? 'selected' : ''}>Closed</option>
-              <option value="Pending" ${ticket.status === 'Pending' ? 'selected' : ''}>Pending</option>
-            </select>
-          </td>
-          <td class="p-2 border" contenteditable="true">${ticket.priority || 'Normal'}</td>
-          <td class="p-2 border">${ticket.lastUpdated || 'N/A'}</td>
-          <td class="p-2 border" contenteditable="true">${ticket.instructionType || 'N/A'}</td>
-          <td class="p-2 border" contenteditable="true">${ticket.additionalRequirement || 'N/A'}</td>
-          <td class="p-2 border" contenteditable="true">${ticket.ticketStatus || 'Received'}</td>
-          <td class="p-2 border" contenteditable="true">${ticket.approvalFrom || 'N/A'}</td>
-          <td class="p-2 border">
-            
-          </td>
-          <td class="p-2 border">
-            <button onclick="editTicket(${index})" class="p-1 bg-blue-500 text-white rounded">Edit</button>
+    // Prepare the data array for DataTable
+    const data = tickets.map((ticket, index) => {
+        return [
+            index + 1,                     // # (index)
+            ticket.tickitId,               // Ticket ID
+            ticket.createdAt,              // Created At
+            ticket.fullName,               // Full Name
+            ticket.email,                  // Email
+            ticket.subject,                // Subject
+            ticket.issueLocation,          // Issue Location
+            ticket.description,            // Description
+            ticket.society_id,             // Society ID
+            ticket.wingBuildingNo,         // Building No.
+            `<select onchange="updateStatus('${ticket._id}', this.value)" class="p-1 border rounded">
+                <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>Open</option>
+                <option value="Closed" ${ticket.status === 'Closed' ? 'selected' : ''}>Closed</option>
+                <option value="Pending" ${ticket.status === 'Pending' ? 'selected' : ''}>Pending</option>
+            </select>`,                    // Status Dropdown
+            `<span contenteditable="true">${ticket.priority || 'Normal'}</span>`, // Priority (editable)
+            ticket.lastUpdated || 'N/A',    // Last Updated
+            `<span contenteditable="true">${ticket.instructionType || 'N/A'}</span>`,  // Instruction Type (editable)
+            `<span contenteditable="true">${ticket.additionalRequirement || 'N/A'}</span>`, // Additional Requirement (editable)
+            `<span contenteditable="true">${ticket.ticketStatus || 'Received'}</span>`,  // Ticket Status (editable)
+            `<span contenteditable="true">${ticket.approvalFrom || 'N/A'}</span>`,  // Approval From (editable)
+            `<button onclick="editTicket(${index})" class="p-1 bg-blue-500 text-white rounded">Edit</button>
             <button onclick="updateTicket('${ticket._id}', ${index})" class="p-1 bg-green-500 text-white rounded">Update</button>
-            <button onclick="deleteTicket('${ticket._id}')" class="p-1 bg-red-500 text-white rounded">Delete</button>
-          </td>
-        `;
-        ticketTableBody.appendChild(row);
-      });
+            <button onclick="deleteTicket('${ticket._id}')" class="p-1 bg-red-500 text-white rounded">Delete</button>` // Action Buttons
+        ];
+    });
+
+    // Initialize the DataTable with data
+    $('#ticketTable').DataTable({
+        data: data,
+        columns: [
+            { title: "#" },
+            { title: "Ticket ID" },
+            { title: "Created At" },
+            { title: "Full Name" },
+            { title: "Email" },
+            { title: "Subject" },
+            { title: "Issue Location" },
+            { title: "Description" },
+            { title: "Society ID" },
+            { title: "Building No." },
+            { title: "Status" },
+            { title: "Priority" },
+            { title: "Last Updated" },
+            { title: "Instruction Type" },
+            { title: "Additional Requirement" },
+            { title: "Ticket Status" },
+            { title: "Approval From" },
+            { title: "Actions" }
+        ],
+        paging: true,          // Enable pagination
+        searching: true,       // Enable search 
+        ordering: true,        // Enable sorting
+        info: true             // Show table info (e.g. "Showing 1 to 10 of 100 entries")
+    });
+
+
 
       // Calculate and update ticket statistics
       const totalTickets = tickets.length;
@@ -190,7 +242,7 @@
       const closedTickets = tickets.filter(ticket => ticket.status === 'Closed').length;
       const avgResponseTime = calculateAverageResponseTime(tickets);
       const unassignedTickets = tickets.filter(ticket => !ticket.manager).length;
-      const assignedTickets = tickets.filter(ticket => ticket.manager).length;
+      const assignedTickets = tickets.filter(ticket => ticket.manager_id).length;
 
       document.getElementById('totalTickets').textContent = totalTickets;
       document.getElementById('openTickets').textContent = openTickets;
@@ -315,6 +367,6 @@
       fetchTickets();
     });
   </script>
-</body>
+  </body>
 
 </html>
